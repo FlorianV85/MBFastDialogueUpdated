@@ -132,7 +132,7 @@ namespace MBFastDialogue.CampaignBehaviors
                 ConditionOf("game_menu_encounter_leave_on_condition"),
                 (args) =>
                 {
-                    MenuHelper.EncounterLeaveConsequence(args);
+                    MenuHelper.EncounterLeaveConsequence();
                     if (PartyBase.MainParty.IsMobile && PartyBase.MainParty.MobileParty != null)
                     {
                         PartyBase.MainParty.MobileParty.SetDisorganized(false);
