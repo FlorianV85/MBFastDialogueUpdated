@@ -58,13 +58,13 @@ jobs:
           run: |
             dotnet tool install -g Bannerlord.ChangelogParser
             vers="$(bannerlord_changelog_parser latestversion -f "$PWD/changelog.txt")"
-            echo "::set-output name=mod_version::$vers"
+            echo "{name}={mod_version}::$vers" >> $GITHUB_OUTPUT
             desc="$(bannerlord_changelog_parser fulldescription -f "$PWD/changelog.txt")"
             desc="${desc//'%'/'%25'}"
             desc="${desc//$'"'/'%22'}"
             desc="${desc//$'\n'/'%0A'}"
             desc="${desc//$'\r'/'%0D'}"
-            echo "::set-output name=mod_description::$desc"
+            echo "{name}={mod_description}::$desc" >> $GITHUB_OUTPUT
     
         - name: Upload bannerlord folder
           uses: actions/upload-artifact@v3
