@@ -350,5 +350,5 @@ MigrationBackup/
 .ionide/
 
 
-MBFastDialogue/.idea/
-MBFastDialogue/obj/
+src/MBFastDialogue/.idea/
+src/MBFastDialogue/obj/

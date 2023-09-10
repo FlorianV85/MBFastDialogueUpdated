@@ -1,0 +1,83 @@
+name: Build & deploy module
+on: workflow_dispatch
+
+jobs:
+    build-module:
+        name: Build module
+        runs-on: windows-latest
+        outputs:
+            mod_version: ${{ steps.changelog.outputs.mod_version }}
+            mod_description: ${{ steps.changelog.outputs.mod_description }}
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup .NET core
+          uses: actions/setup-dotnet@master
+          with:
+            dotnet-version: 6.0.x  
+          env:
+            DOTNET_NOLOGO: 1
+            DOTNET_CLI_TELEMETRY_OPTOUT: 1
+        
+        - name: Build
+          run: |
+            $impl = $PWD.Path + '/bannerlord-implementations';
+            $path = $PWD.Path + '/bannerlord';
+            $final = $path + '/Modules/MBFastDialogue/bin/Win64_Shipping_Client/';
+            $proj = 'src/MBFastDialogue/MBFastDialogue.csproj';
+            $pdll = $path + '/Modules/MBFastDialogue/bin/Win64_Shipping_Client/MBFastDialogue*.dll';
+            $ppdb = $path + '/Modules/MBFastDialogue/bin/Win64_Shipping_Client/MBFastDialogue*.pdb';
+            # The folders are required to be created before executing the script
+            New-Item -ItemType directory -Force -Path $impl;
+            New-Item -ItemType directory -Force -Path $path;
+            [string[]]$gameversions = Get-Content -Path supported-game-versions.txt;
+            # Process all implementations
+            For ($i = 0; $i -le $gameversions.Length - 1; $i++)
+            {
+                $gameversion = $gameversions[$i];
+                $version = $gameversion.substring(1);
+                $constgameversion = $gameversion.replace(".", "");
+                echo "::group::Build for $gameversion"
+                echo "Start building for gameversion = $gameversion"
+                dotnet clean $proj --configuration Release;
+                dotnet build $proj --configuration Release -p:OverrideGameVersion=$gameversion -p:GameFolder="$path" -p:ConstGameVersionWithPrefix="$constgameversion";
+                # Copy Implementations to the Implementations folder
+                Copy-Item $pdll $impl/;
+                Copy-Item $ppdb $impl/;
+                echo "::endgroup::"
+            }
+            # Copy Implementations to the Module
+            Copy-Item $impl/* $final;
+            # Delete Implementations folder
+            Remove-Item -Recurse $impl;
+          shell: pwsh
+
+        - name: Install and Run ChangelogParser
+          id: changelog
+          run: |
+            dotnet tool install -g Bannerlord.ChangelogParser
+            vers="$(bannerlord_changelog_parser latestversion -f "$PWD/changelog.txt")"
+            echo "::set-output name=mod_version::$vers"
+            desc="$(bannerlord_changelog_parser fulldescription -f "$PWD/changelog.txt")"
+            desc="${desc//'%'/'%25'}"
+            desc="${desc//$'"'/'%22'}"
+            desc="${desc//$'\n'/'%0A'}"
+            desc="${desc//$'\r'/'%0D'}"
+            echo "::set-output name=mod_description::$desc"
+    
+        - name: Upload bannerlord folder
+          uses: actions/upload-artifact@v3
+          with:
+            name: MBFastDialogue
+            path: ./bannerlord/  
+
+    publish-on-github:
+        needs: ["build-module"]
+        uses: BUTR/workflows/.github/workflows/release-github.yml@master
+        with:
+            mod_id: MBFastDialogue
+            mod_version: ${{ needs.build-module.outputs.mod_version }}
+            mod_description: ${{ needs.build-module.outputs.mod_description }}
+            artifact_name: MBFastDialogue
+
