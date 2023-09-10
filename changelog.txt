@@ -3,3 +3,7 @@ Version: 2.5.10
 Game Versions: v1.1.0,v1.1.1,v1.1.2,v1.1.3,v1.1.4,v1.1.5,v1.2.0,v1.2.1,v1.2.2,v1.2.3
 * Rewritten to be compatible with the latest and beta versions in the same archive
 ---------------------------------------------------------------------------------------------------
+Version: 2.5.9
+Game Versions: v1.1.0,v1.1.1,v1.1.2,v1.1.3,v1.1.4,v1.1.5,v1.2.0,v1.2.1,v1.2.2,v1.2.3
+* Improved compatibility with mods that modify the encounter menu. Now, their added menu options are automatically added to Fast Dialogue.
+---------------------------------------------------------------------------------------------------
