@@ -2,8 +2,6 @@
 	<img src="https://img.shields.io/badge/C%23-%23239120.svg" alt="CSharp" />
 	<a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/4607" alt="Fast Dialogue (UPDATED)">
 	<img src="https://img.shields.io/badge/download-Nexus%20Mods-yellow" /></a>
-	<a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/4607" alt="NexusMods Fast Dialogue (UPDATED)">
-	<img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-downloads-ayuqql60xfxb.runkit.sh%2F%3Ftype%3Dtotal%26gameId%3D3174%26modId%3D4607" /></a>
 </p>
 
 # Fast Dialogue (UPDATED)
