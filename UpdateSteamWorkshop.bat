@@ -1,0 +1,1 @@
+"%BANNERLORD_GAME_DIR%\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.SteamWorkshop.exe" "%cd%\tools\WorkshopCreate.xml"

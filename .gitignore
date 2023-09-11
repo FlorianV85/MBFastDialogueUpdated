@@ -352,3 +352,7 @@ MigrationBackup/
 
 src/MBFastDialogue/.idea/
 src/MBFastDialogue/obj/
+
+tools/
+steam_appid.txt
+steam_workshop_uploader.txt
