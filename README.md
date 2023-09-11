@@ -2,6 +2,8 @@
 	<img src="https://img.shields.io/badge/C%23-%23239120.svg" alt="CSharp" />
 	<a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/4607" alt="Fast Dialogue (UPDATED)">
 	<img src="https://img.shields.io/badge/download-Nexus%20Mods-yellow" /></a>
+  <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3034083929" alt="Fast Dialogue (UPDATED)">
+	<img src="https://img.shields.io/badge/download-Steam Workshop-blue" /></a>
 </p>
 
 # Fast Dialogue (UPDATED)
