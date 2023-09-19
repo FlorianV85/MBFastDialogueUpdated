@@ -132,7 +132,7 @@ namespace MBFastDialogue.CampaignBehaviors
                 ConditionOf("game_menu_encounter_leave_on_condition"),
                 (args) =>
                 {
-#if v115 || v114 || v113 || v112 || v111 || v110
+#if v116 || v115 || v114 || v113 || v112 || v111 || v110
                     MenuHelper.EncounterLeaveConsequence(args);
 #else
                     MenuHelper.EncounterLeaveConsequence();
