@@ -63,11 +63,11 @@
         <LastLine   Condition="'$(SGVLineCount)' &gt; 0">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[$(SGVLastEntryIndex)])</LastLine>
         <!-- -->
         <SecondLine Condition="'$(SecondLine)' == ''">$(FirstLine)</SecondLine>
-		<SixthLine Condition="'$(SixthLine)' == ''">$(LastLine)</SixthLine>
+		<FifthLine Condition="'$(FifthLine)' == ''">$(LastLine)</FifthLine>
         <LastLine Condition="'$(LastLine)' == ''">$(SecondLine)</LastLine>
         <!-- -->
         <GameBetaVersion>$(FirstLine)</GameBetaVersion>
-        <GameStableVersion>$(SixthLine)</GameStableVersion>
+        <GameStableVersion>$(FifthLine)</GameStableVersion>
         <GameMinimalVersion>$(LastLine)</GameMinimalVersion>
         <!-- -->
         <GameVersionWithPrefix>v1.0.0</GameVersionWithPrefix>
