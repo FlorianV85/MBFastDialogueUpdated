@@ -2,7 +2,7 @@
 
     <!--Module Version-->
     <PropertyGroup>
-        <Version>2.5.11</Version>
+        <Version>2.5.12</Version>
         <GameVersion>1.1.0</GameVersion>
 		<!-- Module manually override GameVersion -->
 		<!-- <OverrideGameVersion>v1.1.5</OverrideGameVersion> -->
@@ -59,14 +59,15 @@
         <FirstLine  Condition="'$(SGVLineCount)' &gt; 0">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[0])</FirstLine>
         <SecondLine Condition="'$(SGVLineCount)' &gt; 1">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[1])</SecondLine>
 		<FifthLine Condition="'$(SGVLineCount)' &gt; 4">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[4])</FifthLine>
+		<SixthLine Condition="'$(SGVLineCount)' &gt; 4">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[5])</SixthLine>
         <LastLine   Condition="'$(SGVLineCount)' &gt; 0">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[$(SGVLastEntryIndex)])</LastLine>
         <!-- -->
         <SecondLine Condition="'$(SecondLine)' == ''">$(FirstLine)</SecondLine>
-		<FifthLine Condition="'$(FifthLine)' == ''">$(LastLine)</FifthLine>
+		<SixthLine Condition="'$(SixthLine)' == ''">$(LastLine)</SixthLine>
         <LastLine Condition="'$(LastLine)' == ''">$(SecondLine)</LastLine>
         <!-- -->
         <GameBetaVersion>$(FirstLine)</GameBetaVersion>
-        <GameStableVersion>$(FifthLine)</GameStableVersion>
+        <GameStableVersion>$(SixthLine)</GameStableVersion>
         <GameMinimalVersion>$(LastLine)</GameMinimalVersion>
         <!-- -->
         <GameVersionWithPrefix>v1.0.0</GameVersionWithPrefix>
