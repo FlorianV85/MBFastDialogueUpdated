@@ -69,9 +69,13 @@ namespace MBFastDialogue.CampaignBehaviors
                 "{=o1pZHZOF}Attack!",
                 args =>
                 {
-                    return ShouldShowWarOptions() && ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_attack_on_condition", new object[] { args });
+                    return ShouldShowWarOptions() && MenuHelper.EncounterAttackCondition(args) /*ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_attack_on_condition", new object[] { args })*/;
                 },
-                ConsequenceOf("game_menu_encounter_attack_on_consequence"),
+                (args) =>
+                {
+                    MenuHelper.EncounterAttackConsequence(args);
+                },
+                //ConsequenceOf("game_menu_encounter_attack_on_consequence"),
                 false,
                 -1,
                 false);
@@ -83,7 +87,11 @@ namespace MBFastDialogue.CampaignBehaviors
                 {
                     return ShouldShowWarOptions() && ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_order_attack_on_condition", new object[] { args });
                 },
-                ConsequenceOf("game_menu_encounter_order_attack_on_consequence"),
+                (args) =>
+                {
+                    MenuHelper.EncounterOrderAttackConsequence(args);
+                },
+                //ConsequenceOf("game_menu_encounter_order_attack_on_consequence"),
                 false,
                 -1,
                 false);
