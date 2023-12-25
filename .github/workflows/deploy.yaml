@@ -67,7 +67,7 @@ jobs:
             echo "{name}={mod_description}::$desc" >> $GITHUB_OUTPUT
     
         - name: Upload bannerlord folder
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: MBFastDialogue
             path: ./bannerlord/  
