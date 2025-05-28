@@ -84,7 +84,7 @@ jobs:
         artifact_name: MBFastDialogue
       secrets:
         NEXUSMODS_APIKEY: ${{ secrets.NEXUSMODS_APIKEY }}
-        NEXUSMODS_COOKIES: ${{ secrets.NEXUSMODS_COOKIES }}        
+        NEXUSMODS_SESSION_COOKIE: ${{ secrets.NEXUSMODS_SESSION_COOKIE }}        
 
     publish-on-github:
         needs: ["build-module"]
