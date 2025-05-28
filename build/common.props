@@ -2,7 +2,7 @@
 
     <!--Module Version-->
     <PropertyGroup>
-        <Version>2.5.17</Version>
+        <Version>2.5.18</Version>
         <GameVersion>1.1.0</GameVersion>
 		<!-- Module manually override GameVersion -->
 		<!-- <OverrideGameVersion>v1.1.5</OverrideGameVersion> -->
@@ -11,11 +11,11 @@
     <!-- Versions of Major Dependencies (For Package References & SubModule.xml Substitution) -->
     <PropertyGroup>
         <!--BuildResources Version-->
-        <BuildResourcesVersion>1.1.0.104</BuildResourcesVersion>
+        <BuildResourcesVersion>1.1.0.124</BuildResourcesVersion>
         <!--Harmony Version-->
-        <HarmonyVersion>2.2.2</HarmonyVersion>
+        <HarmonyVersion>2.3.6</HarmonyVersion>
         <!--ModuleLoader Version-->
-        <BUTRModuleLoaderVersion>1.0.1.44</BUTRModuleLoaderVersion>
+        <BUTRModuleLoaderVersion>1.0.1.50</BUTRModuleLoaderVersion>
     </PropertyGroup>
     <PropertyGroup>
         <TargetFramework>net472</TargetFramework>
