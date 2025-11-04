@@ -31,13 +31,15 @@ namespace MBFastDialogue
 
         public bool running { get; private set; } = true;
 
+        private Harmony harmony;
+
         public FastDialogueSubModule()
         {
             base.OnSubModuleLoad();
             Instance = this;
             try
             {
-                var harmony = new Harmony("io.dallen.bannerlord.fastdialogue");
+                harmony = new Harmony("io.dallen.bannerlord.fastdialogue");
                 harmony.PatchAll(typeof(FastDialogueSubModule).Assembly);
 
                 var newSettings = LoadSettingsFor<Settings>(ModuleName);
@@ -51,6 +53,13 @@ namespace MBFastDialogue
             {
                 // TODO: Find a logger
             }
+        }
+
+        protected override void OnSubModuleUnloaded()
+        {
+            base.OnSubModuleUnloaded();
+            harmony?.UnpatchAll("io.dallen.bannerlord.fastdialogue");
+            
         }
 
         protected override void OnBeforeInitialModuleScreenSetAsRoot()
