@@ -2,7 +2,9 @@ using Helpers;
 using System;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
+#if v110 || v111 || v112 || v113 || v114 || v115 || v116 || v120 || v221 || v122 || v123 || v124 || v125 || v126 || v127 || v128 || v129 || v1210 || v1211 || v1212
 using TaleWorlds.CampaignSystem.Overlay;
+#endif
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
@@ -60,7 +62,11 @@ namespace MBFastDialogue.CampaignBehaviors
                 FastDialogueSubModule.FastEncounterMenu,
                 "{=!}{ENCOUNTER_TEXT}",
                 Init,
-                GameOverlays.MenuOverlayType.Encounter,
+#if v110 || v111 || v112 || v113 || v114 || v115 || v116 || v120 || v221 || v122 || v123 || v124 || v125 || v126 || v127 || v128 || v129 || v1210 || v1211 || v1212
+GameOverlays.MenuOverlayType.Encounter,                
+#else
+                GameMenu.MenuOverlayType.Encounter,
+#endif
                 GameMenu.MenuFlags.None,
                 null);
             campaignGameStarter.AddGameMenuOption(
