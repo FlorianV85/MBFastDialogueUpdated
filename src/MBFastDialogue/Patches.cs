@@ -8,6 +8,7 @@ using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Library;
 using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Encounters;
 
 namespace MBFastDialogue.Patches
 {
@@ -66,14 +67,21 @@ namespace MBFastDialogue.Patches
     [HarmonyPatch(typeof(DefaultEncounterGameMenuModel), "GetEncounterMenu")]
     public class StoryModeEncounterGameMenuModelPatch1
     {
+#if v110 || v111 || v112 || v113 || v114 || v115 || v116 || v120 || v221 || v122 || v123 || v124 || v125 || v126 || v127 || v128 || v129 || v1210 || v1211 || v1212
         private static MethodInfo GetEncounteredPartyBaseMethod { get; }
             = typeof(DefaultEncounterGameMenuModel).GetMethod("GetEncounteredPartyBase", BindingFlags.Instance | BindingFlags.NonPublic);
+#endif
 
         private static void Postfix(DefaultEncounterGameMenuModel __instance, ref string __result, PartyBase attackerParty, PartyBase defenderParty, bool startBattle, bool joinBattle)
         {
             try
             {
+#if v110 || v111 || v112 || v113 || v114 || v115 || v116 || v120 || v221 || v122 || v123 || v124 || v125 || v126 || v127 || v128 || v129 || v1210 || v1211 || v1212
+
                 var encounteredPartyBase = (PartyBase)GetEncounteredPartyBaseMethod.Invoke(__instance, new object[] { attackerParty, defenderParty });
+#else
+                var encounteredPartyBase = PlayerEncounter.EncounteredParty;
+#endif                
                 //InformationManager.DisplayMessage(new InformationMessage($"{encounteredPartyBase.Id}", Color.FromUint(4282569842U)));
                 var result = GetEncounterMenu(attackerParty, defenderParty, encounteredPartyBase);
 
