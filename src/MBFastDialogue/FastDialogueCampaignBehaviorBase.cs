@@ -17,8 +17,21 @@ namespace MBFastDialogue.CampaignBehaviors
     public class FastDialogueCampaignBehaviorBase : EncounterGameMenuBehavior
     {
         private EncounterGameMenuBehavior GetGlobalCampaignBehaviorManager() => Campaign.Current.GetCampaignBehavior<EncounterGameMenuBehavior>();
-        private void Init(MenuCallbackArgs args) =>
-             ReflectionUtils.ForceCall<object>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_on_init", new object[] { args });
+
+        private void Init(MenuCallbackArgs args)
+        {
+            ReflectionUtils.ForceCall<object>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_on_init",
+                new object[] { args });
+            
+            if (PlayerEncounter.Current == null && PlayerEncounter.EncounteredParty != null)
+            {
+                PlayerEncounter.RestartPlayerEncounter(
+                    PlayerEncounter.EncounteredParty, 
+                    PartyBase.MainParty
+                );
+            }
+        }
+
         private GameMenuOption.OnConditionDelegate ConditionOf(string name) =>
             (MenuCallbackArgs args) => ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), name, new object[] { args });
         private GameMenuOption.OnConsequenceDelegate ConsequenceOf(string name) =>
@@ -117,11 +130,29 @@ GameOverlays.MenuOverlayType.Encounter,
                 args =>
                 {
                     args.optionLeaveType = GameMenuOption.LeaveType.Conversation;
-                    return true;
+                    return PlayerEncounter.Current != null || PlayerEncounter.EncounteredParty != null;
                 },
                 args =>
                 {
-                    PlayerEncounter.DoMeeting();
+                    try
+                    {
+                        if (PlayerEncounter.Current == null && PlayerEncounter.EncounteredParty != null)
+                        {
+                            PlayerEncounter.RestartPlayerEncounter(
+                                PlayerEncounter.EncounteredParty,
+                                PartyBase.MainParty
+                            );
+                        }
+
+                        PlayerEncounter.DoMeeting();
+                    }
+                    catch (Exception ex)
+                    {
+                        InformationManager.DisplayMessage(new InformationMessage(
+                            $"Fast Dialogue: Error starting conversation - {ex.Message}", 
+                            Colors.Red
+                        ));
+                    }
                 },
                 false,
                 -1,

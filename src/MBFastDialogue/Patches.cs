@@ -61,6 +61,22 @@ namespace MBFastDialogue.Patches
         }
     }
 
+    [HarmonyPatch(typeof(PlayerEncounter), nameof(PlayerEncounter.LeaveEncounter), MethodType.Setter)]
+    public class PlayerEncounterLeaveEncounterSafetyPatch
+    {
+        private static bool Prefix()
+        {
+            if (PlayerEncounter.Current != null) return true;
+            InformationManager.DisplayMessage(
+                new InformationMessage(
+                    "Fast Dialogue: PlayerEncounter not initialized, interaction skipped", 
+                    Color.FromUint(4282569842U)
+                )
+            );
+            return false;
+        }
+    }
+    
     /// <summary>
     /// Catches game trying to setup a new map menu and subs in the fast encounter menu when appropriate
     /// </summary>
