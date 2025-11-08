@@ -1,12 +1,10 @@
 ﻿using HarmonyLib;
-using MBFastDialogue.CampaignBehaviors;
 using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
-using TaleWorlds.Engine.Screens;
 using TaleWorlds.InputSystem;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
@@ -19,19 +17,19 @@ namespace MBFastDialogue
     /// </summary>
     public class FastDialogueSubModule : MBSubModuleBase
     {
-        public static string FastEncounterMenu = "fast_combat_menu";
+        public const string FastEncounterMenu = "fast_combat_menu";
 
-        public static string ModuleName = "MBFastDialogue";
+        private const string ModuleName = "MBFastDialogue";
 
         public static FastDialogueSubModule? Instance { get; private set; }
 
-        public Settings settings { get; set; } = new Settings();
+        private Settings settings { get; set; } = new Settings();
 
-        private TaleWorlds.InputSystem.InputKey toggleKey = InputKey.X;
+        private readonly InputKey _toggleKey = InputKey.X;
 
-        public bool running { get; private set; } = true;
+        public bool Running { get; private set; } = true;
 
-        private Harmony harmony;
+        private Harmony _harmony;
 
         public FastDialogueSubModule()
         {
@@ -39,17 +37,15 @@ namespace MBFastDialogue
             Instance = this;
             try
             {
-                harmony = new Harmony("io.dallen.bannerlord.fastdialogue");
-                harmony.PatchAll(typeof(FastDialogueSubModule).Assembly);
+                _harmony = new Harmony("io.dallen.bannerlord.fastdialogue");
+                _harmony.PatchAll(typeof(FastDialogueSubModule).Assembly);
 
                 var newSettings = LoadSettingsFor<Settings>(ModuleName);
-                if (newSettings != null)
-                {
-                    settings = newSettings;
-                    Enum.TryParse(settings.toggle_key, out toggleKey);
-                }
+                if (newSettings == null) return;
+                settings = newSettings;
+                Enum.TryParse(settings.ToggleKey, out _toggleKey);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // TODO: Find a logger
             }
@@ -58,18 +54,18 @@ namespace MBFastDialogue
         protected override void OnSubModuleUnloaded()
         {
             base.OnSubModuleUnloaded();
-            harmony?.UnpatchAll("io.dallen.bannerlord.fastdialogue");
+            _harmony?.UnpatchAll("io.dallen.bannerlord.fastdialogue");
             
         }
 
         protected override void OnBeforeInitialModuleScreenSetAsRoot()
         {
-            InformationManager.DisplayMessage(new InformationMessage($"Loaded {ModuleName}. Toggle Hotkey: CTRL + {settings.toggle_key}", Color.FromUint(4282569842U)));
+            InformationManager.DisplayMessage(new InformationMessage($"Loaded {ModuleName}. Toggle Hotkey: CTRL + {settings.ToggleKey}", Color.FromUint(4282569842U)));
         }
 
         protected override void OnGameStart(Game game, IGameStarter gameStarter)
         {
-            if (game.GameType is Campaign campaign && gameStarter is CampaignGameStarter campaignGameStarter)
+            if (game.GameType is Campaign && gameStarter is CampaignGameStarter campaignGameStarter)
             {
                 campaignGameStarter.AddBehavior(new FastDialogueCampaignBehaviorBase());
             }
@@ -77,12 +73,12 @@ namespace MBFastDialogue
 
         public bool IsPatternWhitelisted(string name)
         {
-            if (settings.whitelist.whitelistPatterns.Count == 0)
+            if (settings.Whitelist.WhitelistPatterns.Count == 0)
             {
                 return true;
             }
 
-            foreach (var pattern in settings.whitelist.whitelistPatterns)
+            foreach (var pattern in settings.Whitelist.WhitelistPatterns)
             {
                 if (name.Contains(pattern))
                 {
@@ -95,44 +91,45 @@ namespace MBFastDialogue
 
         protected override void OnApplicationTick(float dt)
         {            
-            ScreenBase topScreen = ScreenManager.TopScreen;
+            var topScreen = ScreenManager.TopScreen;
 
-            if (topScreen != null && (Input.IsKeyDown(InputKey.LeftControl) || Input.IsKeyDown(InputKey.RightControl)) && Input.IsKeyPressed(toggleKey))
+            if (topScreen == null || (!Input.IsKeyDown(InputKey.LeftControl) && !Input.IsKeyDown(InputKey.RightControl)) || !Input.IsKeyPressed(_toggleKey))
             {
-                running = !running;
-                InformationManager.DisplayMessage(new InformationMessage(ModuleName + " is now " + (running ? "active" : "inactive"), Color.FromUint(4282569842U)));
+                return;
             }
+            Running = !Running;
+            InformationManager.DisplayMessage(new InformationMessage(ModuleName + " is now " + (Running ? "active" : "inactive"), Color.FromUint(4282569842U)));
         }
 
         private static T? LoadSettingsFor<T>(string moduleName) where T : class
         {
-            string settingsPath = Path.Combine(BasePath.Name, "Modules", moduleName, "settings.xml");
+            var settingsPath = Path.Combine(BasePath.Name, "Modules", moduleName, "settings.xml");
             try
             {
-                using (XmlReader reader = XmlReader.Create(settingsPath))
+                using (var reader = XmlReader.Create(settingsPath))
                 {
-                    XmlRootAttribute root = new XmlRootAttribute();
+                    var root = new XmlRootAttribute();
                     root.ElementName = moduleName + ".Settings";
                     root.IsNullable = true;
 
                     if (reader.MoveToContent() != XmlNodeType.Element)
                     {
-                        return default;
+                        return null;
                     }
 
                     if (reader.Name != root.ElementName)
                     {
-                        return default;
+                        return null;
                     }
 
-                    XmlSerializer serialiser = new XmlSerializer(typeof(T), root);
+                    var serialiser = new XmlSerializer(typeof(T), root);
                     var loaded = (T)serialiser.Deserialize(reader);
                     return loaded;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return default;
+                return null;
             }
         }
     }

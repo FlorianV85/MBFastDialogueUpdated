@@ -1,18 +1,16 @@
-using Helpers;
 using System;
+using Helpers;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.CampaignBehaviors;
+using TaleWorlds.CampaignSystem.Encounters;
 using TaleWorlds.CampaignSystem.GameMenus;
+using TaleWorlds.CampaignSystem.Party;
+using TaleWorlds.Library;
 #if v110 || v111 || v112 || v113 || v114 || v115 || v116 || v120 || v221 || v122 || v123 || v124 || v125 || v126 || v127 || v128 || v129 || v1210 || v1211 || v1212
 using TaleWorlds.CampaignSystem.Overlay;
 #endif
-using TaleWorlds.CampaignSystem.CampaignBehaviors;
-using TaleWorlds.Core;
-using TaleWorlds.Library;
-using TaleWorlds.CampaignSystem.Encounters;
-using TaleWorlds.CampaignSystem.Party;
-using StoryMode;
 
-namespace MBFastDialogue.CampaignBehaviors
+namespace MBFastDialogue
 {
     public class FastDialogueCampaignBehaviorBase : EncounterGameMenuBehavior
     {
@@ -33,9 +31,9 @@ namespace MBFastDialogue.CampaignBehaviors
         }
 
         private GameMenuOption.OnConditionDelegate ConditionOf(string name) =>
-            (MenuCallbackArgs args) => ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), name, new object[] { args });
+            (args) => ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), name, new object[] { args });
         private GameMenuOption.OnConsequenceDelegate ConsequenceOf(string name) =>
-            (MenuCallbackArgs args) => ReflectionUtils.ForceCall<object>(GetGlobalCampaignBehaviorManager(), name, new object[] { args });
+            (args) => ReflectionUtils.ForceCall<object>(GetGlobalCampaignBehaviorManager(), name, new object[] { args });
 
         private bool ShouldShowWarOptions()
         {
@@ -80,24 +78,21 @@ GameOverlays.MenuOverlayType.Encounter,
 #else
                 GameMenu.MenuOverlayType.Encounter,
 #endif
-                GameMenu.MenuFlags.None,
-                null);
+                //GameMenu.MenuFlags.None,
+                relatedObject: null);
             campaignGameStarter.AddGameMenuOption(
                 FastDialogueSubModule.FastEncounterMenu,
                 $"{FastDialogueSubModule.FastEncounterMenu}_attack",
                 "{=o1pZHZOF}Attack!",
-                args =>
-                {
-                    return ShouldShowWarOptions() && MenuHelper.EncounterAttackCondition(args) /*ReflectionUtils.ForceCall<bool>(GetGlobalCampaignBehaviorManager(), "game_menu_encounter_attack_on_condition", new object[] { args })*/;
-                },
+                args => ShouldShowWarOptions() && MenuHelper.EncounterAttackCondition(args),
                 (args) =>
                 {
                     MenuHelper.EncounterAttackConsequence(args);
                 },
                 //ConsequenceOf("game_menu_encounter_attack_on_consequence"),
-                false,
-                -1,
-                false);
+                isLeave: false,
+                index: -1,
+                isRepeatable: false);
             campaignGameStarter.AddGameMenuOption(
                 FastDialogueSubModule.FastEncounterMenu,
                 $"{FastDialogueSubModule.FastEncounterMenu}_troops",
@@ -111,18 +106,18 @@ GameOverlays.MenuOverlayType.Encounter,
                     MenuHelper.EncounterOrderAttackConsequence(args);
                 },
                 //ConsequenceOf("game_menu_encounter_order_attack_on_consequence"),
-                false,
-                -1,
-                false);
+                isLeave: false,
+                index: -1,
+                isRepeatable: false);
             campaignGameStarter.AddGameMenuOption(
                 FastDialogueSubModule.FastEncounterMenu,
                 $"{FastDialogueSubModule.FastEncounterMenu}_getaway",
                 "{=qNgGoqmI}Try to get away.",
                 ConditionOf("game_menu_encounter_leave_your_soldiers_behind_on_condition"),
                 ConsequenceOf("game_menu_encounter_leave_your_soldiers_behind_accept_on_consequence"),
-                false,
-                -1,
-                false);
+                isLeave: false,
+                index: -1,
+                isRepeatable: false);
             campaignGameStarter.AddGameMenuOption(
                 FastDialogueSubModule.FastEncounterMenu,
                 $"{FastDialogueSubModule.FastEncounterMenu}_talk",
@@ -132,7 +127,7 @@ GameOverlays.MenuOverlayType.Encounter,
                     args.optionLeaveType = GameMenuOption.LeaveType.Conversation;
                     return PlayerEncounter.Current != null || PlayerEncounter.EncounteredParty != null;
                 },
-                args =>
+                _ =>
                 {
                     try
                     {
@@ -154,28 +149,32 @@ GameOverlays.MenuOverlayType.Encounter,
                         ));
                     }
                 },
-                false,
-                -1,
-                false);
+                isLeave: false,
+                index: -1,
+                isRepeatable: false);
             campaignGameStarter.AddGameMenuOption(
                 FastDialogueSubModule.FastEncounterMenu,
                 $"{FastDialogueSubModule.FastEncounterMenu}_surrend",
                 "{=3nT5wWzb}Surrender.",
                 ConditionOf("game_menu_encounter_surrender_on_condition"),
-                args =>
+                _ =>
                 {
                     PlayerEncounter.PlayerSurrender = true;
                     PlayerEncounter.Update();
                 },
-                false,
-                -1,
-                false);
+                isLeave: false,
+                index: -1,
+                isRepeatable: false);
             campaignGameStarter.AddGameMenuOption(
                 FastDialogueSubModule.FastEncounterMenu,
                 $"{FastDialogueSubModule.FastEncounterMenu}_leave",
                 "{=2YYRyrOO}Leave...",
                 ConditionOf("game_menu_encounter_leave_on_condition"),
+#if v110 || v111 || v112 || v113 || v114 || v115 || v116
                 (args) =>
+#else
+            _ =>
+#endif
                 {
 #if v110 || v111 || v112 || v113 || v114 || v115 || v116
                     MenuHelper.EncounterLeaveConsequence(args);
@@ -188,8 +187,8 @@ GameOverlays.MenuOverlayType.Encounter,
                     }
                 },
                 true,
-                -1,
-                false);
+                index: -1,
+                isRepeatable: false);
         }
     }
 }

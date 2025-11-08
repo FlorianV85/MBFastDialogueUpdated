@@ -1,7 +1,6 @@
-﻿using HarmonyLib;
-//using StoryMode.GameModels;
-using System;
+﻿using System;
 using System.Reflection;
+using HarmonyLib;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.CampaignSystem.Party;
@@ -10,7 +9,7 @@ using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Encounters;
 
-namespace MBFastDialogue.Patches
+namespace MBFastDialogue
 {
     /// <summary>
     /// Hook the menu setup method to ensure the fast encounter method is hooked correctly
@@ -20,20 +19,18 @@ namespace MBFastDialogue.Patches
     {
         private static Type DefaultEncounterType { get; }
             = typeof(GameMenu).Assembly.GetType("TaleWorlds.CampaignSystem.GameMenus.GameMenuInitializationHandlers.DefaultEncounter");
-        private static MethodInfo game_menu_encounter_on_initMethod { get; }
-            = DefaultEncounterType.GetMethod("game_menu_encounter_on_init", BindingFlags.Static | BindingFlags.NonPublic);
+        private static MethodInfo GameMenuEncounterOnInitMethod { get; }
+            = DefaultEncounterType.GetMethod("game_menu_encounter_on_init", BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException();
 
         private static void Postfix(GameMenuCallbackManager __instance, string menuId, MenuContext state)
         {
             try
             {
-                if (menuId == FastDialogueSubModule.FastEncounterMenu)
-                {
-                    MenuCallbackArgs args = new MenuCallbackArgs(state, null);
-                    game_menu_encounter_on_initMethod.Invoke(null, new object[] { args });
-                }
+                if (menuId != FastDialogueSubModule.FastEncounterMenu) return;
+                var args = new MenuCallbackArgs(state, null);
+                GameMenuEncounterOnInitMethod.Invoke(null, new object[] { args });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 InformationManager.DisplayMessage(new InformationMessage("Fast Dialogue failed to init menu", Color.FromUint(4282569842U)));
             }
@@ -54,9 +51,9 @@ namespace MBFastDialogue.Patches
                     __instance.AddGameMenuOption(FastDialogueSubModule.FastEncounterMenu, optionId, optionText, condition, consequence, isLeave, index, isRepeatable, relatedObject);
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-
+                InformationManager.DisplayMessage(new InformationMessage("Fast Dialogue failed to integrate the encounter menu options from other mods.", Color.FromUint(4282569842U)));
             }
         }
     }
@@ -106,9 +103,9 @@ namespace MBFastDialogue.Patches
                     __result = result;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             { 
-                InformationManager.DisplayMessage(new InformationMessage($"Fast Dialogue failed to handle interaction", Color.FromUint(4282569842U)));
+                InformationManager.DisplayMessage(new InformationMessage("Fast Dialogue failed to handle interaction", Color.FromUint(4282569842U)));
             }
         }
 
@@ -121,7 +118,7 @@ namespace MBFastDialogue.Patches
                 InformationManager.DisplayMessage(new InformationMessage($"MobileParty StringId : {encounteredPartyBase.MobileParty.StringId}", Color.FromUint(4282569842U)));
             }*/
 
-            if (!FastDialogueSubModule.Instance.running)
+            if (FastDialogueSubModule.Instance != null && !FastDialogueSubModule.Instance.Running)
             {
                 return null;
             }
@@ -141,12 +138,12 @@ namespace MBFastDialogue.Patches
                 return null;
             }
 
-            if (!FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Id))
+            if (FastDialogueSubModule.Instance != null && !FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Id))
             {
                 return null;
             }
 
-            bool inOwnedKingdom = encounteredPartyBase.MapFaction == PartyBase.MainParty.MapFaction && PartyBase.MainParty.MapFaction.Leader.CharacterObject == PartyBase.MainParty.LeaderHero.CharacterObject;
+            var inOwnedKingdom = encounteredPartyBase.MapFaction == PartyBase.MainParty.MapFaction && PartyBase.MainParty.MapFaction.Leader.CharacterObject == PartyBase.MainParty.LeaderHero.CharacterObject;
             if (inOwnedKingdom)
             {
                 return null;
