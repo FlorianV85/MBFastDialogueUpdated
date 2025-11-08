@@ -16,6 +16,8 @@
         <HarmonyVersion>2.3.6</HarmonyVersion>
         <!--ModuleLoader Version-->
         <BUTRModuleLoaderVersion>1.0.1.50</BUTRModuleLoaderVersion>
+        <!--MCM Version-->
+        <MCMVersion>5.10.2</MCMVersion>
     </PropertyGroup>
     <PropertyGroup>
         <TargetFramework>net472</TargetFramework>

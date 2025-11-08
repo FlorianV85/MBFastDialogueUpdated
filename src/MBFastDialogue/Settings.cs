@@ -1,20 +1,28 @@
 ﻿using System.Collections.Generic;
-using System.Xml.Serialization;
 
 namespace MBFastDialogue
 {
     public class Settings
     {
-        [XmlElement("pattern_whitelist")]
         public Whitelist whitelist { get; set; } = new Whitelist();
-
-        [XmlElement]
-        public string toggle_key { get; set; } = "X";
+        public string toggle_key { get; set; } = "X";    
+            
+        public static Settings FromMCM()
+        {
+            var mcm = MCMSettings.Instance;
+            return new Settings
+            {
+                toggle_key = mcm?.ToggleKey.SelectedValue,
+                whitelist = new Whitelist
+                {
+                    whitelistPatterns = mcm?.GetWhitelistPatternsList()
+                }
+            };
+        }
     }
-
+    
     public class Whitelist
     {
-        [XmlElement("pattern")]
         public List<string> whitelistPatterns { get; set; } = new List<string>();
     }
 }

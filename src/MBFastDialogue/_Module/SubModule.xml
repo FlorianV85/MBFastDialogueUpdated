@@ -19,6 +19,7 @@
 	</DependedModules>
 	<DependedModuleMetadatas>
 		<DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" version="v$harmonyversion$" />
+        <DependedModuleMetadata id="Bannerlord.MBOPtionScreen" order="LoadBeforeThis" version="v$mcmversion$" optional="true" />
 		<DependedModuleMetadata id="Native" order="LoadBeforeThis" version="v$gameversion$.*" />
 		<DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" version="v$gameversion$.*" />
 		<DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" version="v$gameversion$.*" />

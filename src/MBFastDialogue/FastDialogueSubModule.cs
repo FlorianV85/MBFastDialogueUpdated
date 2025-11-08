@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using MCM.Internal.Extensions;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Engine.Screens;
@@ -25,7 +26,7 @@ namespace MBFastDialogue
 
         public static FastDialogueSubModule? Instance { get; private set; }
 
-        public Settings settings { get; set; } = new Settings();
+        private Settings settings { get; set; }
 
         private TaleWorlds.InputSystem.InputKey toggleKey = InputKey.X;
 
@@ -41,17 +42,36 @@ namespace MBFastDialogue
             {
                 harmony = new Harmony("io.dallen.bannerlord.fastdialogue");
                 harmony.PatchAll(typeof(FastDialogueSubModule).Assembly);
-
-                var newSettings = LoadSettingsFor<Settings>(ModuleName);
-                if (newSettings != null)
-                {
-                    settings = newSettings;
-                    Enum.TryParse(settings.toggle_key, out toggleKey);
-                }
+                
+               LoadSettingsFromMCM();
+               InformationManager.DisplayMessage(new InformationMessage(
+                   $"Loaded {ModuleName} with MCM support",
+                   Color.FromUint(4282569842U)
+               ));
             }
             catch (Exception ex)
             {
-                // TODO: Find a logger
+                InformationManager.DisplayMessage(new InformationMessage(
+                    $"Fast Dialogue error during load: {ex.Message}", 
+                    Colors.Red
+                ));
+            }
+        }
+        
+        private void LoadSettingsFromMCM()
+        {
+            try
+            {
+                settings = Settings.FromMCM();
+                Enum.TryParse(settings.toggle_key, out toggleKey);
+                if (MCMSettings.Instance != null) running = MCMSettings.Instance.EnableMod;
+            }
+            catch (Exception ex)
+            {
+                InformationManager.DisplayMessage(new InformationMessage(
+                    $"Fast Dialogue: MCM settings error - {ex.Message}", 
+                    Colors.Red
+                ));
             }
         }
 
@@ -62,8 +82,9 @@ namespace MBFastDialogue
             
         }
 
-        protected override void OnBeforeInitialModuleScreenSetAsRoot()
+        public override void OnGameLoaded(Game game, object initializerObject)
         {
+            base.OnGameLoaded(game, initializerObject);
             InformationManager.DisplayMessage(new InformationMessage($"Loaded {ModuleName}. Toggle Hotkey: CTRL + {settings.toggle_key}", Color.FromUint(4282569842U)));
         }
 
@@ -77,6 +98,7 @@ namespace MBFastDialogue
 
         public bool IsPatternWhitelisted(string name)
         {
+            LoadSettingsFromMCM(); 
             if (settings.whitelist.whitelistPatterns.Count == 0)
             {
                 return true;
@@ -94,46 +116,20 @@ namespace MBFastDialogue
         }
 
         protected override void OnApplicationTick(float dt)
-        {            
-            ScreenBase topScreen = ScreenManager.TopScreen;
-
-            if (topScreen != null && (Input.IsKeyDown(InputKey.LeftControl) || Input.IsKeyDown(InputKey.RightControl)) && Input.IsKeyPressed(toggleKey))
-            {
-                running = !running;
-                InformationManager.DisplayMessage(new InformationMessage(ModuleName + " is now " + (running ? "active" : "inactive"), Color.FromUint(4282569842U)));
-            }
-        }
-
-        private static T? LoadSettingsFor<T>(string moduleName) where T : class
         {
-            string settingsPath = Path.Combine(BasePath.Name, "Modules", moduleName, "settings.xml");
-            try
-            {
-                using (XmlReader reader = XmlReader.Create(settingsPath))
-                {
-                    XmlRootAttribute root = new XmlRootAttribute();
-                    root.ElementName = moduleName + ".Settings";
-                    root.IsNullable = true;
+            if (MCMSettings.Instance == null) return;
+            running = MCMSettings.Instance.EnableMod;
+            Enum.TryParse(MCMSettings.Instance.ToggleKey.SelectedValue, out toggleKey);
 
-                    if (reader.MoveToContent() != XmlNodeType.Element)
-                    {
-                        return default;
-                    }
+            var topScreen = ScreenManager.TopScreen;
 
-                    if (reader.Name != root.ElementName)
-                    {
-                        return default;
-                    }
-
-                    XmlSerializer serialiser = new XmlSerializer(typeof(T), root);
-                    var loaded = (T)serialiser.Deserialize(reader);
-                    return loaded;
-                }
-            }
-            catch (Exception ex)
-            {
-                return default;
-            }
+            if (topScreen == null ||
+                (!Input.IsKeyDown(InputKey.LeftControl) && !Input.IsKeyDown(InputKey.RightControl)) ||
+                !Input.IsKeyPressed(toggleKey)) return;
+            running = !running;
+            MCMSettings.Instance.EnableMod = running;
+            InformationManager.DisplayMessage(new InformationMessage(
+                ModuleName + " is now " + (running ? "active" : "inactive"), Color.FromUint(4282569842U)));
         }
     }
 }
