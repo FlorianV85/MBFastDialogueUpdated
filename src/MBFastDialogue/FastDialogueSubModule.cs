@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using MBFastDialogue.CampaignBehaviors;
 using System;
 using System.IO;
 using System.Xml;
@@ -28,11 +27,11 @@ namespace MBFastDialogue
 
         private Settings settings { get; set; }
 
-        private TaleWorlds.InputSystem.InputKey toggleKey = InputKey.X;
+        private InputKey _toggleKey = InputKey.X;
 
-        public bool running { get; private set; } = true;
+        public bool Running { get; private set; } = true;
 
-        private Harmony harmony;
+        private Harmony _harmony;
 
         public FastDialogueSubModule()
         {
@@ -40,14 +39,14 @@ namespace MBFastDialogue
             Instance = this;
             try
             {
-                harmony = new Harmony("io.dallen.bannerlord.fastdialogue");
-                harmony.PatchAll(typeof(FastDialogueSubModule).Assembly);
-                
-               LoadSettingsFromMCM();
-               InformationManager.DisplayMessage(new InformationMessage(
-                   $"Loaded {ModuleName} with MCM support",
-                   Color.FromUint(4282569842U)
-               ));
+                _harmony = new Harmony("io.dallen.bannerlord.fastdialogue");
+                _harmony.PatchAll(typeof(FastDialogueSubModule).Assembly);
+
+                LoadSettingsFromMCM();
+                InformationManager.DisplayMessage(new InformationMessage(
+                    $"Loaded {ModuleName} with MCM support",
+                    Color.FromUint(4282569842U)
+                ));
             }
             catch (Exception ex)
             {
@@ -62,9 +61,11 @@ namespace MBFastDialogue
         {
             try
             {
-                settings = Settings.FromMCM();
-                Enum.TryParse(settings.toggle_key, out toggleKey);
-                if (MCMSettings.Instance != null) running = MCMSettings.Instance.EnableMod;
+                var newSettings = Settings.FromMCM();
+                if(newSettings == null) return;
+                settings = newSettings;
+                Enum.TryParse(settings.ToggleKey, out _toggleKey);
+                if (MCMSettings.Instance != null) Running = MCMSettings.Instance.EnableMod;
             }
             catch (Exception ex)
             {
@@ -78,14 +79,13 @@ namespace MBFastDialogue
         protected override void OnSubModuleUnloaded()
         {
             base.OnSubModuleUnloaded();
-            harmony?.UnpatchAll("io.dallen.bannerlord.fastdialogue");
+            _harmony?.UnpatchAll("io.dallen.bannerlord.fastdialogue");
             
         }
 
-        public override void OnGameLoaded(Game game, object initializerObject)
+        protected override void OnBeforeInitialModuleScreenSetAsRoot()
         {
-            base.OnGameLoaded(game, initializerObject);
-            InformationManager.DisplayMessage(new InformationMessage($"Loaded {ModuleName}. Toggle Hotkey: CTRL + {settings.toggle_key}", Color.FromUint(4282569842U)));
+            InformationManager.DisplayMessage(new InformationMessage($"Loaded {ModuleName}. Toggle Hotkey: CTRL + {settings.ToggleKey}", Color.FromUint(4282569842U)));
         }
 
         protected override void OnGameStart(Game game, IGameStarter gameStarter)
@@ -98,13 +98,12 @@ namespace MBFastDialogue
 
         public bool IsPatternWhitelisted(string name)
         {
-            LoadSettingsFromMCM(); 
-            if (settings.whitelist.whitelistPatterns.Count == 0)
+            if (settings.Whitelist.WhitelistPatterns.Count == 0)
             {
                 return true;
             }
 
-            foreach (var pattern in settings.whitelist.whitelistPatterns)
+            foreach (var pattern in settings.Whitelist.WhitelistPatterns)
             {
                 if (name.Contains(pattern))
                 {
@@ -116,20 +115,51 @@ namespace MBFastDialogue
         }
 
         protected override void OnApplicationTick(float dt)
-        {
+        {            
             if (MCMSettings.Instance == null) return;
-            running = MCMSettings.Instance.EnableMod;
-            Enum.TryParse(MCMSettings.Instance.ToggleKey.SelectedValue, out toggleKey);
+            Running = MCMSettings.Instance.EnableMod;
+            Enum.TryParse(MCMSettings.Instance.ToggleKey.SelectedValue, out _toggleKey);
 
             var topScreen = ScreenManager.TopScreen;
 
-            if (topScreen == null ||
-                (!Input.IsKeyDown(InputKey.LeftControl) && !Input.IsKeyDown(InputKey.RightControl)) ||
-                !Input.IsKeyPressed(toggleKey)) return;
-            running = !running;
-            MCMSettings.Instance.EnableMod = running;
-            InformationManager.DisplayMessage(new InformationMessage(
-                ModuleName + " is now " + (running ? "active" : "inactive"), Color.FromUint(4282569842U)));
+            if (topScreen == null || (!Input.IsKeyDown(InputKey.LeftControl) && !Input.IsKeyDown(InputKey.RightControl)) || !Input.IsKeyPressed(_toggleKey))
+            {
+                Running = !Running;
+                MCMSettings.Instance.EnableMod = Running;
+                InformationManager.DisplayMessage(new InformationMessage(ModuleName + " is now " + (Running ? "active" : "inactive"), Color.FromUint(4282569842U)));
+            }
+        }
+
+        private static T? LoadSettingsFor<T>(string moduleName) where T : class
+        {
+            var settingsPath = Path.Combine(BasePath.Name, "Modules", moduleName, "settings.xml");
+            try
+            {
+                using (var reader = XmlReader.Create(settingsPath))
+                {
+                    var root = new XmlRootAttribute();
+                    root.ElementName = moduleName + ".Settings";
+                    root.IsNullable = true;
+
+                    if (reader.MoveToContent() != XmlNodeType.Element)
+                    {
+                        return null;
+                    }
+
+                    if (reader.Name != root.ElementName)
+                    {
+                        return null;
+                    }
+
+                    var serialiser = new XmlSerializer(typeof(T), root);
+                    var loaded = (T)serialiser.Deserialize(reader);
+                    return loaded;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
