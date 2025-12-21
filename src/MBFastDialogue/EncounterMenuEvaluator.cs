@@ -19,9 +19,14 @@ namespace MBFastDialogue
             if (encountered.IsSettlement || encountered.MapEvent != null) return null;
 
             var partyId = encountered.Id;
+            var mobile = encountered.MobileParty;
 
             if (partyId.Contains("locate_and_rescue_traveller_quest_raider_party")) return null;
 
+            if (partyId.Contains("quest_party_template") && mobile is { IsCurrentlyUsedByAQuest: true }) return null;
+            
+            if (partyId.Contains("naval_corsair") && mobile is { IsCurrentlyUsedByAQuest: true }) return null;
+            
             if (!instance.IsPatternWhitelisted(partyId)) return null;
 
             var main = PartyBase.MainParty;
@@ -31,7 +36,6 @@ namespace MBFastDialogue
             
             if (!isAtWar)
             {
-                var mobile = encountered.MobileParty;
                 if (encounteredFaction.IsClan || 
                     encounteredFaction.IsMinorFaction ||
                     (mobile?.IsLordParty == true))
