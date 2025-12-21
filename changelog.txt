@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.0
+Game Versions: For v1.0.x/ v1.1.x/ v1.2.x/ v1.3.x
+* Disabling Fast Dialogue when encountering certain parties to prevent conflicts with story quest dialogues (such as Emira al-Fahda in the DLC).
+* Some optimisations and code refactoring
+---------------------------------------------------------------------------------------------------
 Version: 2.6.1
 Game Versions: v1.1.0,v1.1.1,v1.1.2,v1.1.3,v1.1.4,v1.1.5,v1.1.6,v1.2.0,v1.2.1,v1.2.2,v1.2.3,v1.2.4,v1.2.5,v1.2.6,v1.2.7,v1.2.8,v1.2.9,v1.2.10,v1.2.11,v1.2.12,v1.3.0,v1.3.1,v1.3.2
 * Fixed a crash that could occur during conversations with parties using certain other mods (notably Fourberie)
