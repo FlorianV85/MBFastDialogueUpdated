@@ -68,53 +68,6 @@ namespace MBFastDialogue
                 }
             }
             
-            /*if (FastDialogueSubModule.Instance != null && !FastDialogueSubModule.Instance.Running)
-            {
-                return null;
-            }
-
-            if(encounteredPartyBase.Id.Contains("locate_and_rescue_traveller_quest_raider_party"))
-            {
-                return null;
-            }
-
-            if (encounteredPartyBase.IsSettlement || encounteredPartyBase.MapEvent != null)
-            {
-                return null;
-            }*/
-
-            /*if ((encounteredPartyBase.MapFaction.IsClan || (encounteredPartyBase.MobileParty != null && encounteredPartyBase.MobileParty.IsLordParty) || encounteredPartyBase.MapFaction.IsMinorFaction) && !PartyBase.MainParty.MapFaction.IsAtWarWith(encounteredPartyBase.MapFaction))
-            {
-                return null;
-            }
-
-            if (FastDialogueSubModule.Instance != null && !FastDialogueSubModule.Instance.IsPatternWhitelisted(encounteredPartyBase.Id))
-            {
-                return null;
-            }
-
-            var inOwnedKingdom = encounteredPartyBase.MapFaction == PartyBase.MainParty.MapFaction && PartyBase.MainParty.MapFaction.Leader.CharacterObject == PartyBase.MainParty.LeaderHero.CharacterObject;
-            if (inOwnedKingdom)
-            {
-                return null;
-            }
-
-            if (encounteredPartyBase.MobileParty?.IsCurrentlyUsedByAQuest == true && encounteredPartyBase.Id.Contains("villager"))
-            {
-                return null;
-            }
-
-            if (!encounteredPartyBase.IsMobile)
-            {
-                return FastDialogueSubModule.FastEncounterMenu;
-            }
-
-            var notGarrisonOrSiege = !encounteredPartyBase.MobileParty.IsGarrison || MobileParty.MainParty.BesiegedSettlement == null;
-            var notOwnSettlementOrNotOwnBesiegedSettlement = MobileParty.MainParty.CurrentSettlement == null || encounteredPartyBase.MobileParty.BesiegedSettlement != MobileParty.MainParty.CurrentSettlement;
-            if (notGarrisonOrSiege && notOwnSettlementOrNotOwnBesiegedSettlement)
-            {
-                return FastDialogueSubModule.FastEncounterMenu;
-            }*/
             return null;
         }
     }

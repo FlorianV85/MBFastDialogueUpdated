@@ -30,14 +30,6 @@ namespace MBFastDialogue
                     }
                 }
             }
-            /*FieldInfo? field = null;
-            var baseType = obj.GetType();
-            while (field == null)
-            {
-                field = baseType.GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
-                baseType = baseType.BaseType;
-                if (baseType == null) break;
-            }*/
             return (T)field.GetValue(obj);
         }
 
@@ -60,14 +52,7 @@ namespace MBFastDialogue
                     }
                 }
             }
-            /*MethodInfo? method = null;
-            var baseType = obj.GetType();
-            while (method == null)
-            {
-                method = baseType.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
-                baseType = baseType.BaseType;
-                if (baseType == null) break;
-            }*/
+            
             if (method.ReturnType == typeof(void))
             {
                 method.Invoke(obj, args);

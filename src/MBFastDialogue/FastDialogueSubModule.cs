@@ -33,26 +33,6 @@ namespace MBFastDialogue
         {
             Instance = this;
         }
-
-        /*public FastDialogueSubModule()
-        {
-            base.OnSubModuleLoad();
-            Instance = this;
-            try
-            {
-                _harmony = new Harmony("io.dallen.bannerlord.fastdialogue");
-                _harmony.PatchAll(typeof(FastDialogueSubModule).Assembly);
-
-                var newSettings = LoadSettingsFor<Settings>(ModuleName);
-                if (newSettings == null) return;
-                _settings = newSettings;
-                Enum.TryParse(_settings.ToggleKey, out _toggleKey);
-            }
-            catch (Exception)
-            {
-                // TODO: Find a logger
-            }
-        }*/
         
         protected override void OnSubModuleLoad()
         {
@@ -132,15 +112,6 @@ namespace MBFastDialogue
             Running = !Running;
             var status = Running ? "active" : "inactive";
             InformationManager.DisplayMessage(new InformationMessage($"{ModuleName} is now {status}", Color.FromUint(4282569842U)));
-            
-            /*var topScreen = ScreenManager.TopScreen;
-
-            if (topScreen == null || (!Input.IsKeyDown(InputKey.LeftControl) && !Input.IsKeyDown(InputKey.RightControl)) || !Input.IsKeyPressed(_toggleKey))
-            {
-                return;
-            }
-            Running = !Running;
-            InformationManager.DisplayMessage(new InformationMessage(ModuleName + " is now " + (Running ? "active" : "inactive"), Color.FromUint(4282569842U)));*/
         }
 
         private bool IsToggleKeyPressed()

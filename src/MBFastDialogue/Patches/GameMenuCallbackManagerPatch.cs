@@ -35,10 +35,6 @@ namespace MBFastDialogue.Patches
             {
                 var args = new MenuCallbackArgs(state, null);
                 GameMenuEncounterOnInitMethod.Invoke(null, new object[] { args });
-                
-                /*if (menuId != FastDialogueSubModule.FastEncounterMenu) return;
-                var args = new MenuCallbackArgs(state, null);
-                GameMenuEncounterOnInitMethod.Invoke(null, new object[] { args });*/
             }
             catch (Exception ex)
             {
