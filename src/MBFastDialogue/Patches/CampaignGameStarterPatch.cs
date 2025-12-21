@@ -45,10 +45,6 @@ namespace MBFastDialogue.Patches
                     index, 
                     isRepeatable, 
                     relatedObject);
-                /*if (menuId == "encounter" && optionId != "continue_preparations" && optionId != "village_raid_action" && optionId != "village_force_volunteer_action" && optionId != "village_force_supplies_action" && optionId != "attack" && optionId != "capture_the_enemy" && optionId != "str_order_attack" && optionId != "leave_soldiers_behind" && optionId != "surrender" && optionId != "leave" && optionId != "go_back_to_settlement")
-                {
-                    __instance.AddGameMenuOption(FastDialogueSubModule.FastEncounterMenu, optionId, optionText, condition, consequence, isLeave, index, isRepeatable, relatedObject);
-                }*/
             }
             catch(Exception ex)
             {

@@ -33,26 +33,6 @@ namespace MBFastDialogue
         {
             Instance = this;
         }
-
-        /*public FastDialogueSubModule()
-        {
-            base.OnSubModuleLoad();
-            Instance = this;
-            try
-            {
-                _harmony = new Harmony("io.dallen.bannerlord.fastdialogue");
-                _harmony.PatchAll(typeof(FastDialogueSubModule).Assembly);
-
-                var newSettings = LoadSettingsFor<Settings>(ModuleName);
-                if (newSettings == null) return;
-                settings = newSettings;
-                Enum.TryParse(settings.ToggleKey, out _toggleKey);
-            }
-            catch (Exception)
-            {
-                // TODO: Find a logger
-            }
-        }*/
         
         protected override void OnSubModuleLoad()
         {

@@ -31,14 +31,6 @@ namespace MBFastDialogue
             {
                 PlayerEncounter.RestartPlayerEncounter(encountered, MainParty);
             }
-            
-            /*if (PlayerEncounter.Current == null && PlayerEncounter.EncounteredParty != null)
-            {
-                PlayerEncounter.RestartPlayerEncounter(
-                    PlayerEncounter.EncounteredParty, 
-                    PartyBase.MainParty
-                );
-            }*/
         }
 
         private GameMenuOption.OnConditionDelegate ConditionOf(string name) =>
