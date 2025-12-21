@@ -13,7 +13,7 @@
         <!--BuildResources Version-->
         <BuildResourcesVersion>1.1.0.129</BuildResourcesVersion>
         <!--Harmony Version-->
-        <HarmonyVersion>2.3.6</HarmonyVersion>
+        <HarmonyVersion>2.4.2</HarmonyVersion>
         <!--ModuleLoader Version-->
         <BUTRModuleLoaderVersion>1.0.1.50</BUTRModuleLoaderVersion>
     </PropertyGroup>
@@ -67,7 +67,7 @@
         <LastLine Condition="'$(LastLine)' == ''">$(SecondLine)</LastLine>
         <!-- -->
         <GameBetaVersion>$(FirstLine)</GameBetaVersion>
-        <GameStableVersion>$(FourthLine)</GameStableVersion>
+        <GameStableVersion>$(SecondLine)</GameStableVersion>
         <GameMinimalVersion>$(LastLine)</GameMinimalVersion>
         <!-- -->
         <GameVersionWithPrefix>v1.0.0</GameVersionWithPrefix>
