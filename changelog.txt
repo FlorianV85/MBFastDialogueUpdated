@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 3.0.1
+Game Versions: v1.0.x/ v1.1.x/ v1.2.x/ v1.3.x
+* Fixed toggle_key setting not being applied correctly
+* Clarified that toggle_key setting use physical QWERTY layout. For AZERTY: use W instead of Z, A instead of Q, etc.
+---------------------------------------------------------------------------------------------------
 Version: 3.0.0
 Game Versions: For v1.0.x/ v1.1.x/ v1.2.x/ v1.3.x
 * Disabling Fast Dialogue when encountering certain parties to prevent conflicts with story quest dialogues (such as Emira al-Fahda in the DLC).
