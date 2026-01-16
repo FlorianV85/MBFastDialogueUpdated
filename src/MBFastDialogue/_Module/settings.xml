@@ -3,5 +3,8 @@
 		 <!--pattern>looter</pattern-->
 		 <!--pattern>bandit</pattern-->
 	</pattern_whitelist>
+
+	<!-- ToggleKey uses the physical position of the key (QWERTY)
+     For AZERTY: use W instead of Z, A instead of Q, etc. -->
   <toggle_key>X</toggle_key>
 </MBFastDialogue.Settings>
