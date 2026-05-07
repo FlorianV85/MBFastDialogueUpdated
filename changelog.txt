@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 4.0.0
+Game Versions: v1.3.x/ v1.4.x
+* Game versions before 1.3.4 are no longer supported. If you are using an older version of the game, be sure to download a different release of this mod that's compatible with your game—and downgrade Harmony.
+* Add support for beta v1.4.x
+---------------------------------------------------------------------------------------------------
 Version: 3.0.1
 Game Versions: v1.0.x/ v1.1.x/ v1.2.x/ v1.3.x
 * Fixed toggle_key setting not being applied correctly
