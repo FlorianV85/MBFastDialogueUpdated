@@ -3,7 +3,7 @@
     <!--Module Version-->
     <PropertyGroup>
         <Version>3.0.1</Version>
-        <GameVersion>1.1.0</GameVersion>
+        <GameVersion>1.3.4</GameVersion>
 		<!-- Module manually override GameVersion -->
 		<!-- <OverrideGameVersion>v1.1.5</OverrideGameVersion> -->
     </PropertyGroup>
