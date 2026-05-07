@@ -6,9 +6,6 @@ using TaleWorlds.CampaignSystem.Encounters;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Library;
-#if v110 || v111 || v112 || v113 || v114 || v115 || v116 || v120 || v221 || v122 || v123 || v124 || v125 || v126 || v127 || v128 || v129 || v1210 || v1211 || v1212
-using TaleWorlds.CampaignSystem.Overlay;
-#endif
 
 namespace MBFastDialogue
 {
@@ -78,13 +75,9 @@ namespace MBFastDialogue
                 menuId,
                 "{=!}{ENCOUNTER_TEXT}",
                 Init,
-#if v110 || v111 || v112 || v113 || v114 || v115 || v116 || v120 || v221 || v122 || v123 || v124 || v125 || v126 || v127 || v128 || v129 || v1210 || v1211 || v1212
-                GameOverlays.MenuOverlayType.Encounter,                
-#else
                 GameMenu.MenuOverlayType.Encounter,
-#endif
-                relatedObject: null);
-
+                relatedObject: null
+            );
             AddMenuOptions(starter, menuId);
         }
         
@@ -145,11 +138,7 @@ namespace MBFastDialogue
                 $"{menuId}_leave",
                 "{=2YYRyrOO}Leave...",
                 ConditionOf("game_menu_encounter_leave_on_condition"),
-#if v110 || v111 || v112 || v113 || v114 || v115 || v116
-                args => OnLeaveConsequence(args),
-#else
                 _ => OnLeaveConsequence(null),
-#endif
                 isLeave: true, index: -1, isRepeatable: false);
         }
         
@@ -176,11 +165,7 @@ namespace MBFastDialogue
         
         private void OnLeaveConsequence(MenuCallbackArgs args)
         {
-#if v110 || v111 || v112 || v113 || v114 || v115 || v116
-            MenuHelper.EncounterLeaveConsequence(args);
-#else
             MenuHelper.EncounterLeaveConsequence();
-#endif
             var mobile = MainParty.MobileParty;
             if (mobile != null)
             {
