@@ -13,7 +13,7 @@ namespace MBFastDialogue.Patches
     public static class CampaignGameStarterPatch
     {
         private static void Postfix(
-            CampaignGameStarter __instance,
+            CampaignGameStarter instance,
             string menuId, 
             string optionId, 
             string optionText, 
@@ -22,13 +22,13 @@ namespace MBFastDialogue.Patches
             bool isLeave = false, 
             int index = -1, 
             bool isRepeatable = false, 
-            object relatedObject = null)
+            object? relatedObject = null)
         {
             if (menuId != "encounter" || ExcludeMenuOptions.Ids.Contains(optionId)) return;
             
             try
             {
-                __instance.AddGameMenuOption(
+                instance.AddGameMenuOption(
                     ModuleConstants.FastEncounterMenu,
                     optionId,
                     optionText, 

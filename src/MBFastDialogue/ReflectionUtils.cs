@@ -61,7 +61,7 @@ namespace MBFastDialogue
             return (T)method.Invoke(obj, args);
         }
 
-        private static FieldInfo FindField(Type type, string fieldName)
+        private static FieldInfo? FindField(Type? type, string fieldName)
         {
             const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
             while (type != null)
@@ -73,7 +73,7 @@ namespace MBFastDialogue
             return null;
         }
         
-        private static MethodInfo FindMethod(Type type, string methodName)
+        private static MethodInfo? FindMethod(Type? type, string methodName)
         {
             const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
             while (type != null)

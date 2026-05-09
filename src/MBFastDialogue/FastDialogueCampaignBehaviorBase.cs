@@ -12,8 +12,8 @@ namespace MBFastDialogue
 {
     public class FastDialogueCampaignBehaviorBase : EncounterGameMenuBehavior
     {
-        private EncounterGameMenuBehavior _behaviorManager;
-        private PartyBase _mainParty;
+        private EncounterGameMenuBehavior? _behaviorManager;
+        private PartyBase? _mainParty;
         private EncounterGameMenuBehavior GlobalCampaignBehaviorManager => _behaviorManager ??= Campaign.Current.GetCampaignBehavior<EncounterGameMenuBehavior>();
         private PartyBase MainParty => _mainParty ??= PartyBase.MainParty;
         
@@ -89,7 +89,7 @@ namespace MBFastDialogue
                 $"{menuId}_attack",
                 "{=o1pZHZOF}Attack!",
                 args => ShouldShowWarOptions() && MenuHelper.EncounterAttackCondition(args),
-                args => MenuHelper.EncounterAttackConsequence(args),
+                MenuHelper.EncounterAttackConsequence,
                 isLeave: false, index: -1, isRepeatable: false);
 
             starter.AddGameMenuOption(
@@ -99,7 +99,7 @@ namespace MBFastDialogue
                 args => ShouldShowWarOptions() && 
                         ReflectionUtils.ForceCall<bool>(GlobalCampaignBehaviorManager, 
                             "game_menu_encounter_order_attack_on_condition", new object[] { args }),
-                args => MenuHelper.EncounterOrderAttackConsequence(args),
+                MenuHelper.EncounterOrderAttackConsequence,
                 isLeave: false, index: -1, isRepeatable: false);
 
             starter.AddGameMenuOption(

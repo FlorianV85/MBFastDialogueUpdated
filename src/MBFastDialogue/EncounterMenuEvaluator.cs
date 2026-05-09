@@ -5,7 +5,7 @@ namespace MBFastDialogue
 {
     internal static class EncounterMenuEvaluator
     {
-        public static string GetEncounterMenu(PartyBase encountered)
+        public static string? GetEncounterMenu(PartyBase encountered)
         {
             // Debug
             /*InformationManager.DisplayMessage(new InformationMessage($"Party ID : {encounteredPartyBase.Id}", Color.FromUint(4282569842U)));

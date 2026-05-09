@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using System;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using MBFastDialogue.Constants;
@@ -18,11 +19,11 @@ namespace MBFastDialogue
     /// </summary>
     public class FastDialogueSubModule : MBSubModuleBase
     {
-        public static FastDialogueSubModule Instance { get; private set; }
+        public static FastDialogueSubModule? Instance { get; private set; }
 
-        private Settings _settings { get; set; } = new Settings();
+        private Settings _settings = new Settings();
         private InputKey _toggleKey = InputKey.X;
-        private Harmony _harmony; 
+        private Harmony? _harmony; 
         public bool Running { get; private set; } = true;
 
 
@@ -89,15 +90,7 @@ namespace MBFastDialogue
             }
 
             var patterns = _settings.Whitelist.WhitelistPatterns;
-            foreach (var t in patterns)
-            {
-                if (name.Contains(t))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return patterns.Any(name.Contains);
         }
 
         protected override void OnApplicationTick(float dt)
