@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using HarmonyLib;
+using MBFastDialogue.Constants;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.Library;
@@ -12,13 +12,6 @@ namespace MBFastDialogue.Patches
     [HarmonyPatch(typeof(CampaignGameStarter), "AddGameMenuOption")]
     public static class CampaignGameStarterPatch
     {
-        private static readonly HashSet<string> ExcludedOptions = new HashSet<string>
-        {
-            "continue_preparations", "village_raid_action", "village_force_volunteer_action",
-            "village_force_supplies_action", "attack", "capture_the_enemy", "str_order_attack",
-            "leave_soldiers_behind", "surrender", "leave", "go_back_to_settlement"
-        };
-        
         private static void Postfix(
             CampaignGameStarter __instance,
             string menuId, 
@@ -31,12 +24,12 @@ namespace MBFastDialogue.Patches
             bool isRepeatable = false, 
             object relatedObject = null)
         {
-            if (menuId != "encounter" || ExcludedOptions.Contains(optionId)) return;
+            if (menuId != "encounter" || ExcludeMenuOptions.Ids.Contains(optionId)) return;
             
             try
             {
                 __instance.AddGameMenuOption(
-                    FastDialogueSubModule.FastEncounterMenu,
+                    ModuleConstants.FastEncounterMenu,
                     optionId,
                     optionText, 
                     condition, 

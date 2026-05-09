@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using MBFastDialogue.Constants;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.InputSystem;
@@ -17,10 +18,6 @@ namespace MBFastDialogue
     /// </summary>
     public class FastDialogueSubModule : MBSubModuleBase
     {
-        public const string FastEncounterMenu = "fast_combat_menu";
-        private const string ModuleName = "MBFastDialogue";
-        private const string HarmonyId = "io.dallen.bannerlord.fastdialogue";
-
         public static FastDialogueSubModule Instance { get; private set; }
 
         private Settings _settings { get; set; } = new Settings();
@@ -50,21 +47,21 @@ namespace MBFastDialogue
         
         private void InitializeSettings()
         {
-            _settings = LoadSettingsFor<Settings>(ModuleName) ?? new Settings();
+            _settings = LoadSettingsFor<Settings>(ModuleConstants.ModuleName) ?? new Settings();
             _toggleKey = Enum.TryParse(_settings.ToggleKey, out InputKey key) ? key : InputKey.X;
             Running = true;
         }
 
         private void InitializeHarmony()
         {
-            _harmony = new Harmony(HarmonyId);
+            _harmony = new Harmony(ModuleConstants.HarmonyId);
             _harmony.PatchAll(typeof(FastDialogueSubModule).Assembly);
         }
 
         protected override void OnSubModuleUnloaded()
         {
             base.OnSubModuleUnloaded();
-            _harmony?.UnpatchAll(HarmonyId);
+            _harmony?.UnpatchAll(ModuleConstants.HarmonyId);
             ReflectionUtils.ClearCache();
             Instance = null;
 
@@ -72,7 +69,7 @@ namespace MBFastDialogue
 
         protected override void OnBeforeInitialModuleScreenSetAsRoot()
         {
-            var message = $"Loaded {ModuleName}. Toggle: CTRL + {_settings?.ToggleKey ?? "X"}";
+            var message = $"Loaded {ModuleConstants.ModuleName}. Toggle: CTRL + {_settings?.ToggleKey ?? "X"}";
             InformationManager.DisplayMessage(new InformationMessage(message, Color.FromUint(4282569842U)));
         }
 
@@ -111,7 +108,7 @@ namespace MBFastDialogue
             
             Running = !Running;
             var status = Running ? "active" : "inactive";
-            InformationManager.DisplayMessage(new InformationMessage($"{ModuleName} is now {status}", Color.FromUint(4282569842U)));
+            InformationManager.DisplayMessage(new InformationMessage($"{ModuleConstants.ModuleName} is now {status}", Color.FromUint(4282569842U)));
         }
 
         private bool IsToggleKeyPressed()

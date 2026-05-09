@@ -1,5 +1,6 @@
 using System;
 using Helpers;
+using MBFastDialogue.Constants;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Encounters;
@@ -43,14 +44,14 @@ namespace MBFastDialogue
                 if (encountered == null) return false;
                 var partyId = encountered.Id;
                 
-                if (partyId.Contains("quest_party_template")) return true;
+                if (partyId.Contains(PartyIds.QuestPartyTemplate)) return true;
                 
                 var mobile = PlayerEncounter.EncounteredMobileParty;
                 if (mobile != null)
                 {
                     var stringId = mobile.StringId;
                     
-                    if (stringId.Contains("conspiracy") || stringId.Contains("conspirator")) return true;
+                    if (stringId.Contains(PartyIds.Conspiracy) || stringId.Contains(PartyIds.Conspirator)) return true;
                     
                     if ((mobile.IsCaravan || mobile.IsVillager) && MainParty.MapFaction != encountered.MapFaction) return true;
                 }
@@ -70,7 +71,7 @@ namespace MBFastDialogue
 
         private void OnSessionLaunched(CampaignGameStarter starter)
         {
-            var menuId = FastDialogueSubModule.FastEncounterMenu;
+            const string menuId = ModuleConstants.FastEncounterMenu;
             starter.AddGameMenu(
                 menuId,
                 "{=!}{ENCOUNTER_TEXT}",

@@ -1,4 +1,5 @@
-﻿using TaleWorlds.CampaignSystem.Party;
+﻿using MBFastDialogue.Constants;
+using TaleWorlds.CampaignSystem.Party;
 
 namespace MBFastDialogue
 {
@@ -21,11 +22,11 @@ namespace MBFastDialogue
             var partyId = encountered.Id;
             var mobile = encountered.MobileParty;
 
-            if (partyId.Contains("locate_and_rescue_traveller_quest_raider_party")) return null;
+            if (partyId.Contains(PartyIds.LocateAndRescueTravellerQuestRaiderParty)) return null;
 
-            if (partyId.Contains("quest_party_template") && mobile is { IsCurrentlyUsedByAQuest: true }) return null;
+            if (partyId.Contains(PartyIds.QuestPartyTemplate) && mobile is { IsCurrentlyUsedByAQuest: true }) return null;
             
-            if (partyId.Contains("naval_corsair") && mobile is { IsCurrentlyUsedByAQuest: true }) return null;
+            if (partyId.Contains(PartyIds.NavalCorsair) && mobile is { IsCurrentlyUsedByAQuest: true }) return null;
             
             if (!instance.IsPatternWhitelisted(partyId)) return null;
 
@@ -51,9 +52,9 @@ namespace MBFastDialogue
             }
             
             var mobileParty = encountered.MobileParty;
-            if (mobileParty?.IsCurrentlyUsedByAQuest == true && partyId.Contains("villager")) return null;
+            if (mobileParty?.IsCurrentlyUsedByAQuest == true && partyId.Contains(PartyIds.Villager)) return null;
             
-            if (!encountered.IsMobile) return FastDialogueSubModule.FastEncounterMenu;
+            if (!encountered.IsMobile) return ModuleConstants.FastEncounterMenu;
             
             if (mobileParty != null)
             {
@@ -64,7 +65,7 @@ namespace MBFastDialogue
                 
                 if (!isGarrisonWithSiege && !isOwnBesiegedSettlement)
                 {
-                    return FastDialogueSubModule.FastEncounterMenu;
+                    return ModuleConstants.FastEncounterMenu;
                 }
             }
             

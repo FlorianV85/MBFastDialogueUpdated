@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using HarmonyLib;
+using MBFastDialogue.Constants;
 using TaleWorlds.CampaignSystem.GameMenus;
 using TaleWorlds.CampaignSystem.GameState;
 using TaleWorlds.Library;
@@ -29,7 +30,7 @@ namespace MBFastDialogue.Patches
         
         private static void Postfix(GameMenuCallbackManager __instance, string menuId, MenuContext state)
         {
-            if (menuId != FastDialogueSubModule.FastEncounterMenu || GameMenuEncounterOnInitMethod == null) return;
+            if (menuId != ModuleConstants.FastEncounterMenu || GameMenuEncounterOnInitMethod == null) return;
             
             try
             {
