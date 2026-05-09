@@ -96,9 +96,7 @@ namespace MBFastDialogue
                 menuId,
                 $"{menuId}_troops",
                 "{=QfMeoKOm}Send troops.",
-                args => ShouldShowWarOptions() && 
-                        ReflectionUtils.ForceCall<bool>(GlobalCampaignBehaviorManager, 
-                            "game_menu_encounter_order_attack_on_condition", new object[] { args }),
+                args => ShouldShowWarOptions() &&  MenuHelper.EncounterOrderAttackCondition(args),
                 MenuHelper.EncounterOrderAttackConsequence,
                 isLeave: false, index: -1, isRepeatable: false);
 
