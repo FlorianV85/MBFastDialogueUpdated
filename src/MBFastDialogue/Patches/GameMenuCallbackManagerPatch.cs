@@ -28,7 +28,7 @@ namespace MBFastDialogue.Patches
                     BindingFlags.Static | BindingFlags.NonPublic);
         }
         
-        private static void Postfix(GameMenuCallbackManager instance, string menuId, MenuContext state)
+        private static void Postfix(GameMenuCallbackManager __instance, string menuId, MenuContext state)
         {
             if (menuId != ModuleConstants.FastEncounterMenu || GameMenuEncounterOnInitMethod == null) return;
             

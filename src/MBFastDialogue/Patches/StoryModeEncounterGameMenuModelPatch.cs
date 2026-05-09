@@ -15,8 +15,8 @@ namespace MBFastDialogue.Patches
     public static class StoryModeEncounterGameMenuModelPatch
     {
         private static void Postfix(
-            DefaultEncounterGameMenuModel instance, 
-            ref string result, 
+            DefaultEncounterGameMenuModel __instance, 
+            ref string __result, 
             PartyBase attackerParty, 
             PartyBase defenderParty, 
             bool startBattle, 
@@ -30,7 +30,7 @@ namespace MBFastDialogue.Patches
                 var encounterMenu = EncounterMenuEvaluator.GetEncounterMenu(encountered);
                 if (encounterMenu != null)
                 {
-                    result = encounterMenu;
+                    __result = encounterMenu;
                 }
             }
             catch (Exception ex)

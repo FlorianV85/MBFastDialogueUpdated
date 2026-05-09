@@ -13,7 +13,7 @@ namespace MBFastDialogue.Patches
     public static class CampaignGameStarterPatch
     {
         private static void Postfix(
-            CampaignGameStarter instance,
+            CampaignGameStarter __instance,
             string menuId, 
             string optionId, 
             string optionText, 
@@ -28,7 +28,7 @@ namespace MBFastDialogue.Patches
             
             try
             {
-                instance.AddGameMenuOption(
+                __instance.AddGameMenuOption(
                     ModuleConstants.FastEncounterMenu,
                     optionId,
                     optionText, 
