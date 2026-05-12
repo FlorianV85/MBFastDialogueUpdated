@@ -26,6 +26,10 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Harmony.Extensions" Version="$(HarmonyExtensionsVersion)">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <!-- ReferenceAssemblies -->
         <PackageReference Include="Bannerlord.ReferenceAssemblies.Core" Version="$(GameVersion).*-*" PrivateAssets="All" />
         <PackageReference Include="Bannerlord.ReferenceAssemblies.Native" Version="$(GameVersion).*-*" PrivateAssets="All" />

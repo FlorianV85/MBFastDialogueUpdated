@@ -63,7 +63,6 @@ namespace MBFastDialogue
         {
             base.OnSubModuleUnloaded();
             _harmony?.UnpatchAll(ModuleConstants.HarmonyId);
-            ReflectionUtils.ClearCache();
             Instance = null;
 
         }

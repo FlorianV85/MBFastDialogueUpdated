@@ -1,4 +1,5 @@
 using System;
+using HarmonyLib.BUTR.Extensions;
 using Helpers;
 using MBFastDialogue.Constants;
 using TaleWorlds.CampaignSystem;
@@ -12,30 +13,31 @@ namespace MBFastDialogue
 {
     public class FastDialogueCampaignBehaviorBase : EncounterGameMenuBehavior
     {
-        private EncounterGameMenuBehavior? _behaviorManager;
-        private PartyBase? _mainParty;
-        private EncounterGameMenuBehavior GlobalCampaignBehaviorManager => _behaviorManager ??= Campaign.Current.GetCampaignBehavior<EncounterGameMenuBehavior>();
-        private PartyBase MainParty => _mainParty ??= PartyBase.MainParty;
+        private delegate void GameMenuEncounterOnInitDelegate(MenuCallbackArgs args);
+        private delegate bool EncounterLeaveSoldiersBehindConditionDelegate(MenuCallbackArgs args);
+        private delegate void EncounterLeaveSoldiersBehindConsequenceDelegate(MenuCallbackArgs args);
+        private delegate bool EncounterSurrenderConditionDelegate(MenuCallbackArgs args);
+        private delegate bool EncounterLeaveConditionDelegate(MenuCallbackArgs args);
+
+        private GameMenuEncounterOnInitDelegate? _gameEncounterOnInit;
+        private EncounterSurrenderConditionDelegate? _encounterSurrenderCondition;
+        private EncounterLeaveConditionDelegate? _encounterLeaveCondition;
+        private EncounterLeaveSoldiersBehindConditionDelegate? _encounterLeaveSoldiersBehindCondition;
+        private EncounterLeaveSoldiersBehindConsequenceDelegate? _encounterLeaveSoldiersBehindConsequence;
         
         private void Init(MenuCallbackArgs args)
         {
-            ReflectionUtils.ForceCall<object>(GlobalCampaignBehaviorManager, "game_menu_encounter_on_init",
-                new object[] { args });
+            _gameEncounterOnInit?.Invoke(args);
 
             var current = PlayerEncounter.Current;
             var encountered = PlayerEncounter.EncounteredParty;
 
             if (current == null && encountered != null)
             {
-                PlayerEncounter.RestartPlayerEncounter(encountered, MainParty);
+                PlayerEncounter.RestartPlayerEncounter(encountered, PartyBase.MainParty);
             }
         }
-
-        private GameMenuOption.OnConditionDelegate ConditionOf(string name) =>
-            (args) => ReflectionUtils.ForceCall<bool>(GlobalCampaignBehaviorManager, name, new object[] { args });
-        private GameMenuOption.OnConsequenceDelegate ConsequenceOf(string name) =>
-            (args) => ReflectionUtils.ForceCall<object>(GlobalCampaignBehaviorManager, name, new object[] { args });
-
+        
         private bool ShouldShowWarOptions()
         {
             try
@@ -53,9 +55,9 @@ namespace MBFastDialogue
                     
                     if (stringId.Contains(PartyIds.Conspiracy) || stringId.Contains(PartyIds.Conspirator)) return true;
                     
-                    if ((mobile.IsCaravan || mobile.IsVillager) && MainParty.MapFaction != encountered.MapFaction) return true;
+                    if ((mobile.IsCaravan || mobile.IsVillager) && PartyBase.MainParty.MapFaction != encountered.MapFaction) return true;
                 }
-                return MainParty.MapFaction.IsAtWarWith(encountered.MapFaction);
+                return PartyBase.MainParty.MapFaction.IsAtWarWith(encountered.MapFaction);
             }
             catch (Exception ex)
             {
@@ -71,6 +73,19 @@ namespace MBFastDialogue
 
         private void OnSessionLaunched(CampaignGameStarter starter)
         {
+            var encounterGameMenuBehavior = Campaign.Current.GetCampaignBehavior<EncounterGameMenuBehavior>();
+            
+            _gameEncounterOnInit
+            = AccessTools2.GetDelegate<GameMenuEncounterOnInitDelegate>(encounterGameMenuBehavior, encounterGameMenuBehavior.GetType(), "game_menu_encounter_on_init");
+            _encounterSurrenderCondition
+                = AccessTools2.GetDelegate<EncounterSurrenderConditionDelegate>(encounterGameMenuBehavior, encounterGameMenuBehavior.GetType(), "game_menu_encounter_surrender_on_condition");
+            _encounterLeaveCondition
+                = AccessTools2.GetDelegate<EncounterLeaveConditionDelegate>(encounterGameMenuBehavior, encounterGameMenuBehavior.GetType(), "game_menu_encounter_leave_on_condition");
+            _encounterLeaveSoldiersBehindCondition
+                = AccessTools2.GetDelegate<EncounterLeaveSoldiersBehindConditionDelegate>(encounterGameMenuBehavior,  encounterGameMenuBehavior.GetType(), "game_menu_encounter_leave_your_soldiers_behind_on_condition");
+            _encounterLeaveSoldiersBehindConsequence
+                = AccessTools2.GetDelegate<EncounterLeaveSoldiersBehindConsequenceDelegate>(encounterGameMenuBehavior, encounterGameMenuBehavior.GetType(), "game_menu_encounter_leave_your_soldiers_behind_accept_on_consequence");
+            
             const string menuId = ModuleConstants.FastEncounterMenu;
             starter.AddGameMenu(
                 menuId,
@@ -104,8 +119,8 @@ namespace MBFastDialogue
                 menuId,
                 $"{menuId}_getaway",
                 "{=qNgGoqmI}Try to get away.",
-                ConditionOf("game_menu_encounter_leave_your_soldiers_behind_on_condition"),
-                ConsequenceOf("game_menu_encounter_leave_your_soldiers_behind_accept_on_consequence"),
+                args => _encounterLeaveSoldiersBehindCondition?.Invoke(args) ?? false,
+                args => _encounterLeaveSoldiersBehindConsequence?.Invoke(args),
                 isLeave: false, index: -1, isRepeatable: false);
 
             starter.AddGameMenuOption(
@@ -124,7 +139,7 @@ namespace MBFastDialogue
                 menuId,
                 $"{menuId}_surrend",
                 "{=3nT5wWzb}Surrender.",
-                ConditionOf("game_menu_encounter_surrender_on_condition"),
+                args => _encounterSurrenderCondition?.Invoke(args) ?? false,
                 _ =>
                 {
                     PlayerEncounter.PlayerSurrender = true;
@@ -136,8 +151,8 @@ namespace MBFastDialogue
                 menuId,
                 $"{menuId}_leave",
                 "{=2YYRyrOO}Leave...",
-                ConditionOf("game_menu_encounter_leave_on_condition"),
-                _ => OnLeaveConsequence(null),
+                args => _encounterLeaveCondition?.Invoke(args) ?? false,
+                OnLeaveConsequence,
                 isLeave: true, index: -1, isRepeatable: false);
         }
         
@@ -150,7 +165,7 @@ namespace MBFastDialogue
                 
                 if (current == null && encountered != null)
                 {
-                    PlayerEncounter.RestartPlayerEncounter(encountered, MainParty);
+                    PlayerEncounter.RestartPlayerEncounter(encountered, PartyBase.MainParty);
                 }
                 
                 PlayerEncounter.DoMeeting();
@@ -165,7 +180,7 @@ namespace MBFastDialogue
         private void OnLeaveConsequence(MenuCallbackArgs args)
         {
             MenuHelper.EncounterLeaveConsequence();
-            var mobile = MainParty.MobileParty;
+            var mobile = PartyBase.MainParty.MobileParty;
             if (mobile != null)
             {
                 mobile.SetDisorganized(false);

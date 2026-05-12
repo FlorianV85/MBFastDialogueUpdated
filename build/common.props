@@ -16,6 +16,8 @@
         <HarmonyVersion>2.4.2</HarmonyVersion>
         <!--ModuleLoader Version-->
         <BUTRModuleLoaderVersion>1.0.1.50</BUTRModuleLoaderVersion>
+        <!--Harmony Extensions Version-->
+        <HarmonyExtensionsVersion>3.2.0.77</HarmonyExtensionsVersion>
     </PropertyGroup>
     <PropertyGroup>
         <TargetFramework>net472</TargetFramework>
@@ -58,7 +60,9 @@
         <!-- First Beta, Fourth Stable, last Minimal -->
         <FirstLine  Condition="'$(SGVLineCount)' &gt; 0">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[0])</FirstLine>
         <SecondLine Condition="'$(SGVLineCount)' &gt; 1">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[1])</SecondLine>
+        <ThirdLine Condition="'$(SGVLineCount)' &gt; 1">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[2])</ThirdLine>
         <FourthLine Condition="'$(SGVLineCount)' &gt; 3">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[3])</FourthLine>
+        <FifthLine Condition="'$(SGVLineCount)' &gt; 3">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[4])</FifthLine>
         <LastLine   Condition="'$(SGVLineCount)' &gt; 0">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[$(SGVLastEntryIndex)])</LastLine>
         <!-- -->
         <SecondLine Condition="'$(SecondLine)' == ''">$(FirstLine)</SecondLine>
@@ -70,7 +74,7 @@
         <GameStableVersion>$(FourthLine)</GameStableVersion>
         <GameMinimalVersion>$(LastLine)</GameMinimalVersion>
         <!-- -->
-        <GameVersionWithPrefix>v1.0.0</GameVersionWithPrefix>
+        <GameVersionWithPrefix>v${GameVersion}</GameVersionWithPrefix>
         <GameVersionWithPrefix Condition="$(IsMinimal)">$(GameMinimalVersion)</GameVersionWithPrefix>
         <GameVersionWithPrefix Condition="$(IsStable)">$(GameStableVersion)</GameVersionWithPrefix>
         <GameVersionWithPrefix Condition="$(IsBeta)">$(GameBetaVersion)</GameVersionWithPrefix>
