@@ -64,18 +64,20 @@
         <FourthLine Condition="'$(SGVLineCount)' &gt; 3">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[3])</FourthLine>
         <FifthLine Condition="'$(SGVLineCount)' &gt; 3">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[4])</FifthLine>
         <SixthLine Condition="'$(SGVLineCount)' &gt; 3">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[5])</SixthLine>
+        <SeventhLine Condition="'$(SGVLineCount)' &gt; 3">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[6])</SeventhLine>
         <LastLine   Condition="'$(SGVLineCount)' &gt; 0">$([System.Text.RegularExpressions.Regex]::Split($(SGVFile), `\r\n|\r|\n`)[$(SGVLastEntryIndex)])</LastLine>
         <!-- -->
         <SecondLine Condition="'$(SecondLine)' == ''">$(FirstLine)</SecondLine>
         <ThirdLine Condition="'$(ThirdLine)' == ''">$(SecondLine)</ThirdLine>
         <FourthLine Condition="'$(FourthLine)' == ''">$(ThirdLine)</FourthLine>
         <FifthLine Condition="'$(FifthLine)' == ''">$(FourthLine)</FifthLine>
-        <SixthLine Condition="'$(FifthLine)' == ''">$(FifthLine)</SixthLine>
-		<NinthLine Condition="'$(NinthLine)' == ''">$(LastLine)</NinthLine>
+        <SixthLine Condition="'$(SixthLine)' == ''">$(FifthLine)</SixthLine>
+        <SeventhLine Condition="'$(SeventhLine)' == ''">$(SixthLine)</SeventhLine>
+        <NinthLine Condition="'$(NinthLine)' == ''">$(LastLine)</NinthLine>
         <LastLine Condition="'$(LastLine)' == ''">$(SecondLine)</LastLine>
         <!-- -->
         <GameBetaVersion>$(FirstLine)</GameBetaVersion>
-        <GameStableVersion>$(SixthLine)</GameStableVersion>
+        <GameStableVersion>$(SeventhLine)</GameStableVersion>
         <GameMinimalVersion>$(LastLine)</GameMinimalVersion>
         <!-- -->
         <GameVersionWithPrefix>v${GameVersion}</GameVersionWithPrefix>
