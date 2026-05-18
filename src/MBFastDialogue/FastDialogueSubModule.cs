@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
+using HarmonyLib;
 using MBFastDialogue.Constants;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
@@ -23,15 +23,14 @@ namespace MBFastDialogue
 
         private Settings _settings = new Settings();
         private InputKey _toggleKey = InputKey.X;
-        private Harmony? _harmony; 
+        private Harmony? _harmony;
         public bool Running { get; private set; } = true;
-
 
         public FastDialogueSubModule()
         {
             Instance = this;
         }
-        
+
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
@@ -45,7 +44,7 @@ namespace MBFastDialogue
                 Running = false;
             }
         }
-        
+
         private void InitializeSettings()
         {
             _settings = LoadSettingsFor<Settings>(ModuleConstants.ModuleName) ?? new Settings();
@@ -64,13 +63,15 @@ namespace MBFastDialogue
             base.OnSubModuleUnloaded();
             _harmony?.UnpatchAll(ModuleConstants.HarmonyId);
             Instance = null;
-
         }
 
         protected override void OnBeforeInitialModuleScreenSetAsRoot()
         {
-            var message = $"Loaded {ModuleConstants.ModuleName}. Toggle: CTRL + {_settings?.ToggleKey ?? "X"}";
-            InformationManager.DisplayMessage(new InformationMessage(message, Color.FromUint(4282569842U)));
+            var message =
+                $"Loaded {ModuleConstants.ModuleName}. Toggle: CTRL + {_settings?.ToggleKey ?? "X"}";
+            InformationManager.DisplayMessage(
+                new InformationMessage(message, Color.FromUint(4282569842U))
+            );
         }
 
         protected override void OnGameStart(Game game, IGameStarter gameStarter)
@@ -83,7 +84,10 @@ namespace MBFastDialogue
 
         public bool IsPatternWhitelisted(string name)
         {
-            if (_settings?.Whitelist?.WhitelistPatterns == null || _settings.Whitelist.WhitelistPatterns.Count == 0)
+            if (
+                _settings?.Whitelist?.WhitelistPatterns == null
+                || _settings.Whitelist.WhitelistPatterns.Count == 0
+            )
             {
                 return true;
             }
@@ -94,22 +98,30 @@ namespace MBFastDialogue
 
         protected override void OnApplicationTick(float dt)
         {
-            if (ScreenManager.TopScreen == null) return;
+            if (ScreenManager.TopScreen == null)
+                return;
 
-            if (!IsToggleKeyPressed()) return;
-            
+            if (!IsToggleKeyPressed())
+                return;
+
             Running = !Running;
             var status = Running ? "active" : "inactive";
-            InformationManager.DisplayMessage(new InformationMessage($"{ModuleConstants.ModuleName} is now {status}", Color.FromUint(4282569842U)));
+            InformationManager.DisplayMessage(
+                new InformationMessage(
+                    $"{ModuleConstants.ModuleName} is now {status}",
+                    Color.FromUint(4282569842U)
+                )
+            );
         }
 
         private bool IsToggleKeyPressed()
         {
-            return (Input.IsKeyDown(InputKey.LeftControl) || Input.IsKeyDown(InputKey.RightControl)) && 
-                   Input.IsKeyPressed(_toggleKey);
+            return (Input.IsKeyDown(InputKey.LeftControl) || Input.IsKeyDown(InputKey.RightControl))
+                && Input.IsKeyPressed(_toggleKey);
         }
-        
-        private static T? LoadSettingsFor<T>(string moduleName) where T : class
+
+        private static T? LoadSettingsFor<T>(string moduleName)
+            where T : class
         {
             var settingsPath = Path.Combine(BasePath.Name, "Modules", moduleName, "settings.xml");
 
@@ -117,7 +129,7 @@ namespace MBFastDialogue
             {
                 return null;
             }
-            
+
             try
             {
                 using (var reader = XmlReader.Create(settingsPath))
@@ -130,7 +142,7 @@ namespace MBFastDialogue
                     var root = new XmlRootAttribute()
                     {
                         ElementName = moduleName + ".Settings",
-                        IsNullable = true
+                        IsNullable = true,
                     };
 
                     if (reader.Name != root.ElementName)

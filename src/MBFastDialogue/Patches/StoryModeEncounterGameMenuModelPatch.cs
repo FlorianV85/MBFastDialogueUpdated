@@ -15,17 +15,19 @@ namespace MBFastDialogue.Patches
     public static class StoryModeEncounterGameMenuModelPatch
     {
         private static void Postfix(
-            DefaultEncounterGameMenuModel __instance, 
-            ref string __result, 
-            PartyBase attackerParty, 
-            PartyBase defenderParty, 
-            bool startBattle, 
-            bool joinBattle)
+            DefaultEncounterGameMenuModel __instance,
+            ref string __result,
+            PartyBase attackerParty,
+            PartyBase defenderParty,
+            bool startBattle,
+            bool joinBattle
+        )
         {
             try
             {
                 var encountered = PlayerEncounter.EncounteredParty;
-                if (encountered == null) return;
+                if (encountered == null)
+                    return;
                 //InformationManager.DisplayMessage(new InformationMessage($"{encounteredPartyBase.Id}", Color.FromUint(4282569842U)));
                 var encounterMenu = EncounterMenuEvaluator.GetEncounterMenu(encountered);
                 if (encounterMenu != null)
@@ -34,8 +36,13 @@ namespace MBFastDialogue.Patches
                 }
             }
             catch (Exception ex)
-            { 
-                InformationManager.DisplayMessage(new InformationMessage($"Fast Dialogue: Encounter handling failed - {ex.Message}", Color.FromUint(4282569842U)));
+            {
+                InformationManager.DisplayMessage(
+                    new InformationMessage(
+                        $"Fast Dialogue: Encounter handling failed - {ex.Message}",
+                        Color.FromUint(4282569842U)
+                    )
+                );
             }
         }
     }

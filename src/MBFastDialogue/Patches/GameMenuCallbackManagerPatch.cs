@@ -19,19 +19,28 @@ namespace MBFastDialogue.Patches
 
         static GameMenuCallbackManagerPatch()
         {
-            DefaultEncounterType =
-                typeof(GameMenu).Assembly.GetType(
-                    "TaleWorlds.CampaignSystem.GameMenus.GameMenuInitializationHandlers.DefaultEncounter");
-            
-            GameMenuEncounterOnInitMethod =
-                DefaultEncounterType?.GetMethod("game_menu_encounter_on_init",
-                    BindingFlags.Static | BindingFlags.NonPublic);
+            DefaultEncounterType = typeof(GameMenu).Assembly.GetType(
+                "TaleWorlds.CampaignSystem.GameMenus.GameMenuInitializationHandlers.DefaultEncounter"
+            );
+
+            GameMenuEncounterOnInitMethod = DefaultEncounterType?.GetMethod(
+                "game_menu_encounter_on_init",
+                BindingFlags.Static | BindingFlags.NonPublic
+            );
         }
-        
-        private static void Postfix(GameMenuCallbackManager __instance, string menuId, MenuContext state)
+
+        private static void Postfix(
+            GameMenuCallbackManager __instance,
+            string menuId,
+            MenuContext state
+        )
         {
-            if (menuId != ModuleConstants.FastEncounterMenu || GameMenuEncounterOnInitMethod == null) return;
-            
+            if (
+                menuId != ModuleConstants.FastEncounterMenu
+                || GameMenuEncounterOnInitMethod == null
+            )
+                return;
+
             try
             {
                 var args = new MenuCallbackArgs(state, null);
@@ -39,7 +48,12 @@ namespace MBFastDialogue.Patches
             }
             catch (Exception ex)
             {
-                InformationManager.DisplayMessage(new InformationMessage($"Fast Dialogue failed to init menu - {ex.Message}", Color.FromUint(4282569842U)));
+                InformationManager.DisplayMessage(
+                    new InformationMessage(
+                        $"Fast Dialogue failed to init menu - {ex.Message}",
+                        Color.FromUint(4282569842U)
+                    )
+                );
             }
         }
     }
