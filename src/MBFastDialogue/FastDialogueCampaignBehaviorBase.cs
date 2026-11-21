@@ -3,6 +3,7 @@ using HarmonyLib.BUTR.Extensions;
 using Helpers;
 using MBFastDialogue.Constants;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.CampaignBehaviors;
 using TaleWorlds.CampaignSystem.Encounters;
 using TaleWorlds.CampaignSystem.GameMenus;
@@ -137,7 +138,14 @@ namespace MBFastDialogue
                 $"{menuId}_attack",
                 "{=o1pZHZOF}Attack!",
                 args => ShouldShowWarOptions() && MenuHelper.EncounterAttackCondition(args),
-                MenuHelper.EncounterAttackConsequence,
+                args =>
+                {
+#if  v134 || v135 || v136 || v137 || v138 || v139 || v1310 || v1311 || v1312 || v1313 || v1314 || v1315 || v140 || v141 || v142 || v143 || v144 || v145 || v146 || v147 || v148
+#else
+                    OnCaravanVillagerHostilityConsequence();
+#endif
+                    MenuHelper.EncounterAttackConsequence(args);
+                },
                 isLeave: false,
                 index: -1,
                 isRepeatable: false
@@ -148,7 +156,14 @@ namespace MBFastDialogue
                 $"{menuId}_troops",
                 "{=QfMeoKOm}Send troops.",
                 args => ShouldShowWarOptions() && MenuHelper.EncounterOrderAttackCondition(args),
-                MenuHelper.EncounterOrderAttackConsequence,
+                args =>
+                {
+#if  v134 || v135 || v136 || v137 || v138 || v139 || v1310 || v1311 || v1312 || v1313 || v1314 || v1315 || v140 || v141 || v142 || v143 || v144 || v145 || v146 || v147 || v148
+#else                    
+                    OnCaravanVillagerHostilityConsequence();
+#endif
+                    MenuHelper.EncounterOrderAttackConsequence(args);
+                },
                 isLeave: false,
                 index: -1,
                 isRepeatable: false
@@ -242,5 +257,17 @@ namespace MBFastDialogue
                 mobile.SetDisorganized(false);
             }
         }
+
+#if  v134 || v135 || v136 || v137 || v138 || v139 || v1310 || v1311 || v1312 || v1313 || v1314 || v1315 || v140 || v141 || v142 || v143 || v144 || v145 || v146 || v147 || v148
+#else    
+        private static void OnCaravanVillagerHostilityConsequence()
+        {
+            var leader = PlayerEncounter.Battle?.GetLeaderParty(PartyBase.MainParty.OpponentSide);
+            if (leader?.MobileParty is { } mp && (mp.IsCaravan || mp.IsVillager))
+            {
+                BeHostileAction.ApplyEncounterHostileAction(PartyBase.MainParty, leader);
+            }
+        }
+#endif
     }
 }
